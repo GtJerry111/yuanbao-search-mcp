@@ -6,7 +6,7 @@ import asyncio
 import re
 import time
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 from .client import (
     HttpClient,
@@ -26,6 +26,7 @@ from .parsers import (
 
 _SESSION_RE = re.compile(r'sessionId\\?"\s*:\s*\\?"([0-9a-f-]{36})', re.I)
 _UUID_RE = re.compile(r'uuid\\?"\s*:\s*\\?"([0-9a-f-]{36})', re.I)
+_ARXIV_PATH_RE = re.compile(r"(?:abs|pdf|html)/(.+?)(?:\.pdf)?$", re.I)
 
 ACADEMIC_PAGE = "https://so.qq.com/isearch"
 SUBQ_URL = "https://lizhiassistant.search.qq.com/vertical_hub/academic/search_for_subq"
@@ -48,6 +49,64 @@ def _check_payload(payload: dict[str, Any]) -> None:
         raise UpstreamError(
             f"Academic API error {status.get('code')}: {status.get('msg') or 'unknown'}"
         )
+    data = payload.get("data")
+    if isinstance(data, dict) and data.get("code") not in (None, 0):
+        raise UpstreamError(
+            f"Academic API error {data.get('code')}: {data.get('msg') or 'unknown'}"
+        )
+
+
+def _normalized_url_key(url: str | None) -> str | None:
+    if not url:
+        return None
+    parsed = urlparse(url.strip())
+    host = (parsed.hostname or "").lower()
+    if not host:
+        return None
+    if host.startswith("www."):
+        host = host[4:]
+    path = parsed.path.rstrip("/")
+    query = f"?{parsed.query}" if parsed.query else ""
+    return f"{host}{path}{query}"
+
+
+def _dedupe_keys(title: str, url: str | None) -> set[str]:
+    keys = {f"title:{title.casefold()}"}
+    if not url:
+        return keys
+    normalized = _normalized_url_key(url)
+    if normalized is None:
+        return keys
+    keys.add(f"url:{normalized}")
+    parsed = urlparse(url.strip())
+    host = (parsed.hostname or "").lower()
+    if host.startswith("www."):
+        host = host[4:]
+    path = parsed.path.rstrip("/")
+    if host == "arxiv.org":
+        match = _ARXIV_PATH_RE.match(path.lstrip("/"))
+        if match:
+            keys.add(f"arxiv:{match.group(1).lower()}")
+    elif host == "doi.org":
+        doi = path.strip("/").lower()
+        if doi:
+            keys.add(f"doi:{doi}")
+    return keys
+
+
+def _sub_question_year(doc: dict[str, Any]) -> str | None:
+    year = doc.get("year")
+    if isinstance(year, bool):
+        year = None
+    if isinstance(year, int):
+        if year > 0:
+            return str(year)
+    elif isinstance(year, str):
+        text = year.strip()
+        if text.isdigit() and int(text) > 0:
+            return text
+    publication_date = doc.get("publication_date")
+    return extract_year(publication_date if isinstance(publication_date, str) else None)
 
 
 def parse_sup(payload: dict[str, Any]) -> list[AcademicPaper]:
@@ -110,13 +169,14 @@ def parse_sub_questions(payload: dict[str, Any]) -> list[AcademicSubQuestion]:
         seen: set[str] = set()
         for doc in item.get("docs") or []:
             title = clean_text(doc.get("title"))
-            url = doc.get("url")
-            if not title or not isinstance(url, str) or not url:
+            if not title:
                 continue
-            key = title.casefold()
-            if key in seen:
+            raw_url = doc.get("url")
+            url = raw_url.strip() if isinstance(raw_url, str) and raw_url.strip() else None
+            keys = _dedupe_keys(title, url)
+            if keys & seen:
                 continue
-            seen.add(key)
+            seen.update(keys)
             abstract, _ = truncate(
                 clean_text(doc.get("abstract_short") or doc.get("abstract")), 300
             )
@@ -124,9 +184,7 @@ def parse_sub_questions(payload: dict[str, Any]) -> list[AcademicSubQuestion]:
                 AcademicDoc(
                     title=title,
                     venue=clean_text(doc.get("journal_name")) or clean_text(doc.get("show_name")),
-                    year=str(doc["year"])
-                    if doc.get("year") is not None
-                    else extract_year(doc.get("publication_date")),
+                    year=_sub_question_year(doc),
                     url=url,
                     abstract_short=abstract,
                 )
@@ -144,7 +202,7 @@ def parse_summary_frame(payload: dict[str, Any]) -> tuple[str, int | None, bool]
         if isinstance(step, dict) and step.get("step_text")
     )
     next_frame = data.get("next_frame_id")
-    if not isinstance(next_frame, int):
+    if isinstance(next_frame, bool) or not isinstance(next_frame, int):
         next_frame = None
     finished = bool(data.get("finish_reason")) or next_frame is None or next_frame <= 0
     return text, next_frame, finished
@@ -211,23 +269,23 @@ class AcademicSession:
         figures_omitted = False
 
         while time.monotonic() < deadline:
-            remaining = max(0.5, deadline - time.monotonic())
+            remaining = max(0.05, deadline - time.monotonic())
             try:
-                payload = await self._client.post_json(
-                    FRAME_URL,
-                    {"session_id": self.session_id, "frame_id": frame, "pass_through": ""},
-                    headers=self._headers(),
-                    rate_limit=False,
-                    timeout=min(remaining, 30.0),
+                payload = await asyncio.wait_for(
+                    self._client.post_json(
+                        FRAME_URL,
+                        {"session_id": self.session_id, "frame_id": frame, "pass_through": ""},
+                        headers=self._headers(),
+                        rate_limit=False,
+                        timeout=min(remaining, 30.0),
+                    ),
+                    timeout=remaining,
                 )
-            except UpstreamTimeoutError:
-                truncated = True
-                break
-            except UpstreamError:
+                _check_payload(payload)
+            except (UpstreamTimeoutError, TimeoutError, UpstreamError):
                 truncated = True
                 break
 
-            _check_payload(payload)
             text, next_frame, finished = parse_summary_frame(payload)
             if text:
                 if _FIGURE_RE.search(text):
@@ -238,6 +296,7 @@ class AcademicSession:
             if finished:
                 break
             if next_frame is None or next_frame <= frame:
+                truncated = True
                 break
             frame = next_frame
             if poll_interval > 0:
