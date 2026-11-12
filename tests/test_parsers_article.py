@@ -54,3 +54,17 @@ def test_minified_paragraphs_are_separated() -> None:
     assert "One\n\nTwo" in article.content
     assert "## Heading" in article.content
     assert "- A" in article.content
+
+
+MINIFIED_LIST_HTML = """
+<html><body>
+<h1 id="activity-name">Minified list</h1>
+<div id="js_content"><ul><li>A</li><li>B</li></ul><p>Next paragraph.</p><blockquote>Q</blockquote><p>After quote.</p></div>
+</body></html>
+"""
+
+
+def test_minified_list_and_quote_boundaries() -> None:
+    article = parse_weixin_article(MINIFIED_LIST_HTML)
+    assert "- B\n\nNext paragraph." in article.content
+    assert "> Q\n\nAfter quote." in article.content
