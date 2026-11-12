@@ -1426,9 +1426,12 @@ Expected: `ImportError: cannot import name 'parse_web_cards'`.
 ```python
 def _web_card_result(vm: dict[str, Any]) -> WebResult | None:
     title = clean_text(vm.get("title"))
-    url = vm.get("url") or vm.get("h5Url")
-    if not title or not isinstance(url, str) or not url:
+    raw_url = vm.get("url")
+    if not isinstance(raw_url, str) or not raw_url:
+        raw_url = vm.get("h5Url")
+    if not title or not isinstance(raw_url, str) or not raw_url:
         return None
+    url = normalize_url(raw_url)
     raw_date = clean_text(vm.get("date")) or clean_text(vm.get("publishTime"))
     return WebResult(
         title=title,
@@ -1458,9 +1461,12 @@ def parse_web_cards(cards: list[dict[str, Any]]) -> tuple[list[WebResult], list[
             continue
 
         if name in ("card-pc/card_bottom_hint", "card-pc/card_hint_middle"):
-            for hint in vm.get("hints") or []:
+            hints = vm.get("hints")
+            if not isinstance(hints, list):
+                continue
+            for hint in hints:
                 if isinstance(hint, dict):
-                    text = clean_text(hint.get("text") or hint.get("query"))
+                    text = clean_text(hint.get("text")) or clean_text(hint.get("query"))
                 else:
                     text = clean_text(hint)
                 if text and text not in related:
