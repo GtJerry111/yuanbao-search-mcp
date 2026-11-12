@@ -177,6 +177,101 @@ def test_parse_sub_questions_dedupes_arxiv_variants() -> None:
     assert papers[0].title == "Variant One"
 
 
+def test_parse_sub_questions_dedupes_arxiv_versions() -> None:
+    payload = {
+        "data": {
+            "sub_queries": [
+                {
+                    "query": "q",
+                    "docs": [
+                        {
+                            "title": "Versioned Paper",
+                            "url": "https://arxiv.org/abs/2609.13166v1",
+                        },
+                        {
+                            "title": "Unversioned Paper",
+                            "url": "https://arxiv.org/html/2609.13166",
+                        },
+                    ],
+                }
+            ]
+        }
+    }
+    papers = parse_sub_questions(payload)[0].papers
+    assert len(papers) == 1
+    assert papers[0].title == "Versioned Paper"
+
+
+def test_parse_sub_questions_dedupes_publisher_dois() -> None:
+    payload = {
+        "data": {
+            "sub_queries": [
+                {
+                    "query": "q",
+                    "docs": [
+                        {
+                            "title": "Full DOI",
+                            "url": "https://dl.acm.org/doi/full/10.1145/3775043.3775047",
+                        },
+                        {
+                            "title": "Bare DOI",
+                            "url": "https://dl.acm.org/doi/10.1145/3775043.3775047",
+                        },
+                        {
+                            "title": "Resolver DOI",
+                            "url": "https://doi.org/10.1145/3775043.3775047",
+                        },
+                    ],
+                }
+            ]
+        }
+    }
+    papers = parse_sub_questions(payload)[0].papers
+    assert len(papers) == 1
+    assert papers[0].title == "Full DOI"
+
+
+def test_parse_sub_questions_skips_url_less_docs() -> None:
+    payload = {
+        "data": {
+            "sub_queries": [
+                {
+                    "query": "q",
+                    "docs": [
+                        {"title": "Shadowing Paper", "abstract_short": "no url"},
+                        {"title": "Shadowing Paper", "url": "https://example.com/paper"},
+                    ],
+                }
+            ]
+        }
+    }
+    papers = parse_sub_questions(payload)[0].papers
+    assert len(papers) == 1
+    assert papers[0].url == "https://example.com/paper"
+
+
+def test_parse_sub_questions_truncates_abstract_short() -> None:
+    payload = {
+        "data": {
+            "sub_queries": [
+                {
+                    "query": "q",
+                    "docs": [
+                        {
+                            "title": "Long Abstract",
+                            "url": "https://example.com/long",
+                            "abstract_short": "A" * 400,
+                        }
+                    ],
+                }
+            ]
+        }
+    }
+    papers = parse_sub_questions(payload)[0].papers
+    assert papers[0].abstract_short is not None
+    assert len(papers[0].abstract_short) == 300
+
+
 def test_parse_summary_frame() -> None:
     payload = {
         "data": {
@@ -281,6 +376,25 @@ async def test_fetch_summary_hard_timeout() -> None:
     assert summary == ""
     assert truncated is True
     assert elapsed < 0.4
+
+
+async def test_fetch_summary_omits_figures() -> None:
+    client = FakeSummaryClient(
+        [
+            {
+                "data": {
+                    "steps": [{"step_text": '<figure figure-id="fig-1"></figure>Text'}],
+                    "next_frame_id": -1,
+                    "finish_reason": "stop",
+                }
+            }
+        ]
+    )
+    session = AcademicSession(client, "q")  # type: ignore[arg-type]
+    summary, _, _, figures_omitted = await session.fetch_summary(timeout=5, poll_interval=0)
+    assert "Text" in summary
+    assert "figure" not in summary
+    assert figures_omitted is True
 
 
 async def test_fetch_summary_finished() -> None:

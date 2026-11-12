@@ -27,6 +27,8 @@ from .parsers import (
 _SESSION_RE = re.compile(r'sessionId\\?"\s*:\s*\\?"([0-9a-f-]{36})', re.I)
 _UUID_RE = re.compile(r'uuid\\?"\s*:\s*\\?"([0-9a-f-]{36})', re.I)
 _ARXIV_PATH_RE = re.compile(r"(?:abs|pdf|html)/(.+?)(?:\.pdf)?$", re.I)
+_ARXIV_VERSION_RE = re.compile(r"v\d+$", re.I)
+_DOI_RE = re.compile(r"10\.\d{4,9}/[^\s?#]+")
 
 ACADEMIC_PAGE = "https://so.qq.com/isearch"
 SUBQ_URL = "https://lizhiassistant.search.qq.com/vertical_hub/academic/search_for_subq"
@@ -86,9 +88,12 @@ def _dedupe_keys(title: str, url: str | None) -> set[str]:
     if host == "arxiv.org":
         match = _ARXIV_PATH_RE.match(path.lstrip("/"))
         if match:
-            keys.add(f"arxiv:{match.group(1).lower()}")
-    elif host == "doi.org":
-        doi = path.strip("/").lower()
+            ident = _ARXIV_VERSION_RE.sub("", match.group(1))
+            if ident:
+                keys.add(f"arxiv:{ident.lower()}")
+    doi_match = _DOI_RE.search(parsed.path or url)
+    if doi_match:
+        doi = doi_match.group(0).rstrip(".,;)]").lower()
         if doi:
             keys.add(f"doi:{doi}")
     return keys
@@ -173,6 +178,8 @@ def parse_sub_questions(payload: dict[str, Any]) -> list[AcademicSubQuestion]:
                 continue
             raw_url = doc.get("url")
             url = raw_url.strip() if isinstance(raw_url, str) and raw_url.strip() else None
+            if url is None:
+                continue
             keys = _dedupe_keys(title, url)
             if keys & seen:
                 continue
@@ -269,7 +276,7 @@ class AcademicSession:
         figures_omitted = False
 
         while time.monotonic() < deadline:
-            remaining = max(0.05, deadline - time.monotonic())
+            remaining = max(0.01, deadline - time.monotonic())
             try:
                 payload = await asyncio.wait_for(
                     self._client.post_json(
@@ -300,7 +307,9 @@ class AcademicSession:
                 break
             frame = next_frame
             if poll_interval > 0:
-                await asyncio.sleep(poll_interval)
+                sleep_for = max(0.0, min(poll_interval, deadline - time.monotonic()))
+                if sleep_for > 0:
+                    await asyncio.sleep(sleep_for)
         else:
             truncated = True
 
