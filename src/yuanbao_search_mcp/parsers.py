@@ -233,15 +233,17 @@ def html_to_markdown(node: Tag) -> str:
     for level in range(1, 7):
         for heading in node.find_all(f"h{level}"):
             heading.insert(0, f"{'#' * level} ")
-            heading.append("\n")
+            heading.append("\n\n")
     for item in node.find_all("li"):
         item.insert(0, "- ")
         item.append("\n")
     for quote in node.find_all("blockquote"):
         quote.insert(0, "> ")
-        quote.append("\n")
-    for block in node.find_all(["p", "section", "div"]):
-        block.append("\n")
+        quote.append("\n\n")
+    for block in node.find_all(
+        ["p", "section", "div", "figure", "figcaption", "pre", "table", "tr"]
+    ):
+        block.append("\n\n")
     text = node.get_text("")
     text = "\n".join(line.strip() for line in text.splitlines())
     text = re.sub(r"\n{3,}", "\n\n", text)

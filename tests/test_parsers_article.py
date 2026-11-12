@@ -39,3 +39,18 @@ def test_parse_article_fields() -> None:
 def test_article_error_page() -> None:
     with pytest.raises(ArticleUnavailableError):
         parse_weixin_article("<html><body>参数错误</body></html>")
+
+
+MINIFIED_HTML = """
+<html><body>
+<h1 id="activity-name">Minified</h1>
+<div id="js_content"><p>One</p><p>Two</p><h2>Heading</h2><ul><li>A</li><li>B</li></ul></div>
+</body></html>
+"""
+
+
+def test_minified_paragraphs_are_separated() -> None:
+    article = parse_weixin_article(MINIFIED_HTML)
+    assert "One\n\nTwo" in article.content
+    assert "## Heading" in article.content
+    assert "- A" in article.content
