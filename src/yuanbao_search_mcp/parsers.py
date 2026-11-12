@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup, Tag
 
 from .client import ArticleUnavailableError, UpstreamParseError
-from .models import WeixinArticle
+from .models import WebResult, WeixinArticle
 
 _HIGHLIGHT_RE = re.compile(r"[\ue40a\ue40b]")
 _TAG_RE = re.compile(r"<[^>]+>")
@@ -284,3 +284,52 @@ def parse_weixin_article(html: str) -> ParsedArticle:
         content=html_to_markdown(content_node),
         images=extract_images(content_node),
     )
+
+
+def _web_card_result(vm: dict[str, Any]) -> WebResult | None:
+    title = clean_text(vm.get("title"))
+    url = vm.get("url") or vm.get("h5Url")
+    if not title or not isinstance(url, str) or not url:
+        return None
+    raw_date = clean_text(vm.get("date")) or clean_text(vm.get("publishTime"))
+    return WebResult(
+        title=title,
+        url=url,
+        source=clean_text(vm.get("sourcename")) or clean_text(vm.get("showname")),
+        date=raw_date,
+        snippet=clean_text(vm.get("content")),
+        date_unknown=parse_date(raw_date) is None,
+    )
+
+
+def parse_web_cards(cards: list[dict[str, Any]]) -> tuple[list[WebResult], list[str]]:
+    results: list[WebResult] = []
+    related: list[str] = []
+    seen_urls: set[str] = set()
+
+    for card in cards:
+        data = card.get("data") or {}
+        vm = data.get("vm") or {}
+        name = data.get("cardName") or ""
+
+        if name in (
+            "card-pc/card_normal_result",
+            "card-pc/card30010588",
+            "card-common/card30010608",
+        ):
+            item = _web_card_result(vm)
+            if item and item.url not in seen_urls:
+                seen_urls.add(item.url)
+                results.append(item)
+            continue
+
+        if name in ("card-pc/card_bottom_hint", "card-pc/card_hint_middle"):
+            for hint in vm.get("hints") or []:
+                if isinstance(hint, dict):
+                    text = clean_text(hint.get("text") or hint.get("query"))
+                else:
+                    text = clean_text(hint)
+                if text and text not in related:
+                    related.append(text)
+
+    return results, related
