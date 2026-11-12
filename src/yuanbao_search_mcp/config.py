@@ -85,7 +85,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def load_settings(argv: list[str] | None = None) -> Settings:
     args = parse_args(argv)
-    settings = Settings()
     updates: dict[str, object] = {}
     if args.transport:
         updates["transport"] = args.transport
@@ -95,4 +94,4 @@ def load_settings(argv: list[str] | None = None) -> Settings:
         updates["port"] = args.port
     if args.log_level:
         updates["log_level"] = args.log_level
-    return Settings(**updates) if updates else settings
+    return Settings(**updates)

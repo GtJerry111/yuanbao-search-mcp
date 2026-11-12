@@ -32,6 +32,12 @@ def test_cli_overrides_env(monkeypatch) -> None:
     assert settings.transport == "stdio"
 
 
+def test_cli_overrides_invalid_env_value(monkeypatch) -> None:
+    monkeypatch.setenv("YUANBAO_PORT", "70000")
+    settings = load_settings(["--port", "8765"])
+    assert settings.port == 8765
+
+
 def test_invalid_port_is_rejected() -> None:
     import pytest
 
