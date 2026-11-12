@@ -41,7 +41,12 @@ def filter_by_days(
     days: int,
     today: date | None = None,
 ) -> tuple[list[WeixinArticle] | list[WebResult], int]:
-    cutoff = (today or date.today()).toordinal() - days
+    """Keep items from the last N calendar days including today.
+
+    Undated items are kept and flagged with ``date_unknown=True``; the second
+    return value is the number of such items.
+    """
+    cutoff = (today or date.today()).toordinal() - (days - 1)
     kept = []
     undated = 0
     for item in items:
@@ -101,9 +106,11 @@ class YuanbaoService:
             raise ValueError("query or account is required")
 
         limit = max(1, min(limit, self.settings.weixin_max_results))
+        if sort not in ("relevance", "date"):
+            raise ValueError("sort must be relevance or date")
         if days is not None and days < 1:
             raise ValueError("days must be >= 1")
-        cache_key = f"wx:{query}|{account}|{limit}|{sort}|{days}"
+        cache_key = repr(("wx", query, account, limit, sort, days))
         cached = self._weixin_cache.get(cache_key)
         if cached is not None:
             return cached
@@ -125,7 +132,6 @@ class YuanbaoService:
                 if item.account and needle in item.account.casefold()
             ]
 
-        total_available = len(articles)
         warnings: list[str] = []
         if days is not None:
             articles, undated = filter_by_days(articles, days)
@@ -133,6 +139,7 @@ class YuanbaoService:
                 warnings.append(
                     f"{undated} result(s) had no publish date and were kept with date_unknown=true."
                 )
+        total_available = len(articles)
         if sort == "date":
             articles = sort_by_date(articles)  # type: ignore[assignment]
 
@@ -213,9 +220,11 @@ class YuanbaoService:
             raise ValueError("scope must be all, gov, or media")
 
         limit = max(1, min(limit, self.settings.web_max_results))
+        if sort not in ("relevance", "date"):
+            raise ValueError("sort must be relevance or date")
         if days is not None and days < 1:
             raise ValueError("days must be >= 1")
-        cache_key = f"web:{query}|{limit}|{scope}|{sort}|{days}"
+        cache_key = repr(("web", query, limit, scope, sort, days))
         cached = self._web_cache.get(cache_key)
         if cached is not None:
             return cached
@@ -267,9 +276,15 @@ class YuanbaoService:
 
         limit = max(1, min(limit, self.settings.academic_max_papers))
         summary_timeout = max(0.1, min(summary_timeout, 120.0))
-        cache_key = (
-            f"academic:{query}|{limit}|{include_summary}|"
-            f"{summary_timeout}|{include_subquestions}"
+        cache_key = repr(
+            (
+                "academic",
+                query,
+                limit,
+                include_summary,
+                summary_timeout,
+                include_subquestions,
+            )
         )
         cached = self._academic_cache.get(cache_key)
         if cached is not None:
