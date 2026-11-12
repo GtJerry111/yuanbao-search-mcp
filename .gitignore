@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+.superpowers/
+dist/
+build/
+*.egg-info/
+.DS_Store

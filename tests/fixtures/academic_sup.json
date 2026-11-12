@@ -1,0 +1,743 @@
+{
+  "query": "大模型推理",
+  "data": {
+    "steps": [],
+    "sup_list": [
+      {
+        "id": 1,
+        "title": "Towards Reasoning in Large Language Models: A Survey",
+        "abstract": "Reasoning is a fundamental aspect of human intelligence that plays a crucial role in activities such as problem solving, decision making, and critical thinking.In recent years, large language models (LLMs) have made significant progress in natural language processing, and there is observation that these models may exhibit reasoning abilities when they are sufficiently large.However, it is not yet clear to what extent LLMs are capable of reasoning.This paper provides a comprehensive overview of the current state of knowledge on reasoning in LLMs, including techniques for improving and eliciting reasoning in these models, methods and benchmarks for evaluating reasoning abilities, findings and implications of previous research in this field, and suggestions on future directions.Our aim is to provide a detailed and up-to-date review of this topic and stimulate meaningful discussion and future work. 1",
+        "url": "https://doi.org/10.18653/v1/2023.findings-acl.67",
+        "authors": [
+          "Jie Huang",
+          "Kevin Chen–Chuan Chang"
+        ],
+        "journal_name": "Findings of the Association for Computational Linguistics: ACL (Findings of ACL)",
+        "cited_by_count": 1011,
+        "publication_date": "2023/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "In recent years, large language models (LLMs) have made significant progress in natural language processing, and there is observation that these models may exhibit reasoning abilities when they are sufficiently large. However, it is not yet clear to what extent LLMs are capable of reasoning.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "This paper provides a comprehensive overview of the current state of knowledge on reasoning in LLMs, including techniques for improving and eliciting reasoning in these models, methods and benchmarks for evaluating reasoning abilities, findings and implications of previous research in this field, and suggestions on future directions.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 2,
+        "title": "The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity",
+        "abstract": "Recent generations of language models have introduced Large Reasoning Models (LRMs) that generate detailed thinking processes before providing answers. While these models demonstrate improved performance on reasoning benchmarks, their fundamental capabilities, scaling properties, and limitations remain insufficiently understood. Current evaluations primarily focus on established math and coding benchmarks, emphasizing final answer accuracy. However, this evaluation paradigm often suffers from contamination and does not provide insights into the reasoning traces. In this work, we systematically investigate these gaps with the help of controllable puzzle environments that allow precise manipulation of complexity while maintaining consistent logical structures. This setup enables the analysis of not only final answers but also the internal reasoning traces, offering insights into how LRMs think. Through extensive experiments, we show that LRMs face a complete accuracy collapse beyond certain complexities. Moreover, they exhibit a counterintuitive scaling limit: their reasoning effort increases with problem complexity up to a point, then declines despite having remaining token budget. By comparing LRMs with their standard LLM counterparts under same inference compute, we identify three performance regimes: (1) low-complexity tasks where standard models outperform LRMs, (2) medium-complexity tasks where LRMs demonstrates advantage, and (3) high-complexity tasks where both models face complete collapse. We found that LRMs have limitations in exact computation: they fail to use explicit algorithms and reason inconsistently across scales. We also investigate the reasoning traces in more depth, studying the patterns of explored solutions and analyzing the models' computational behavior, shedding light on their strengths, limitations, and raising questions about their reasoning capabilities.",
+        "url": "https://doi.org/10.52202/085713-3603",
+        "authors": [
+          "Parshin Shojaee",
+          "Iman Mirzadeh",
+          "Keivan Alizadeh",
+          "Maxwell Horton",
+          "Samy Bengio A",
+          "Mehrdad Farajtabar"
+        ],
+        "journal_name": "neural information processing systems",
+        "cited_by_count": 393,
+        "publication_date": "2025/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Through extensive experiments, we show that LRMs face a complete accuracy collapse beyond certain complexities.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Moreover, they exhibit a counterintuitive scaling limit: their reasoning effort increases with problem complexity up to a point, then declines despite having remaining token budget.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "By comparing LRMs with their standard LLM counterparts under same inference compute, we identify three performance regimes: (1) low-complexity tasks where standard models outperform LRMs, (2) medium-complexity tasks where LRMs demonstrates advantage, (3) high-complexity tasks where both models face complete collapse.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "We found that LRMs have limitations in exact computation: they fail to use explicit algorithms and reason inconsistently across scales.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 3,
+        "title": "Training Language Models to Reason Efficiently",
+        "abstract": "Scaling model size and training data has led to great advances in the performance of Large Language Models (LLMs). However, the diminishing returns of this approach necessitate alternative methods to improve model capabilities, particularly in tasks requiring advanced reasoning. Large reasoning models, which leverage long chain-of-thoughts, bring unprecedented breakthroughs in problem-solving capabilities but at a substantial deployment cost associated to longer generations. Reducing inference costs is crucial for the economic feasibility, user experience, and environmental sustainability of these models. In this work, we propose to train large reasoning models to reason efficiently. More precisely, we use reinforcement learning (RL) to train reasoning models to dynamically allocate inference-time compute based on task complexity. Our method incentivizes models to minimize unnecessary computational overhead while maintaining accuracy, thereby achieving substantial efficiency gains. It enables the derivation of a family of reasoning models with varying efficiency levels, controlled via a single hyperparameter. Experiments on two open-weight large reasoning models demonstrate significant reductions in inference cost while preserving most of the accuracy.",
+        "url": "https://doi.org/10.52202/085713-2032",
+        "authors": [
+          "Daman Arora",
+          "Andrea Zanette"
+        ],
+        "journal_name": "neural information processing systems",
+        "cited_by_count": 226,
+        "publication_date": "2025/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Large reasoning models, which leverage long chain-of-thoughts, bring unprecedented breakthroughs in problem-solving capabilities but at a substantial deployment cost associated to longer generations.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "In this work, we propose to train large reasoning models to reason efficiently. More precisely, we use reinforcement learning (RL) to train reasoning models to dynamically allocate inference-time compute based on task complexity. Our method incentivizes models to minimize unnecessary computational overhead while maintaining accuracy, thereby achieving substantial efficiency gains. It enables the derivation of a family of reasoning models with varying efficiency levels, controlled via a single hyperparameter.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Experiments on two open-weight large reasoning models demonstrate significant reductions in inference cost while preserving most of the accuracy.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 4,
+        "title": "Toward large reasoning models: A survey of reinforced reasoning with large language models",
+        "abstract": "Language has long been an essential tool for human reasoning. The rise of large language models (LLMs) has led to research on their application in complex reasoning tasks. Researchers are exploring the concept of \"thought,\" which represents intermediate reasoning steps, allowing LLMs to emulate humanlike reasoning processes. Recent work has applied reinforcement learning (RL) to train LLMs by searching for high-quality reasoning trajectories through trial-and-error exploration. In parallel, studies also demonstrate that allowing LLMs to \"think\" with longer chains of intermediate tokens at test time can also substantially improve reasoning accuracy. The combination of training and test-time advancements outlines a path toward large reasoning models. This survey reviews recent progress in LLM reasoning. It covers foundational concepts behind LLMs and the key technical components that contribute to the development of large reasoning models, and it highlights popular open-source projects for building these models. The survey concludes by discussing ongoing challenges and future research directions in this field.",
+        "url": "https://doi.org/10.1016/j.patter.2025.101370",
+        "authors": [
+          "Fengli Xu",
+          "Qianyue Hao",
+          "Changhui Shao",
+          "Zefang Zong",
+          "Yu Li",
+          "Jingwei Wang",
+          "Yunke Zhang",
+          "Jing‐Yi Wang",
+          "Xiaochong Lan",
+          "Jiahui Gong",
+          "Tianjian Ouyang",
+          "Fanjin Meng",
+          "Yuwei Yan",
+          "Qinglong Yang",
+          "Yiwen Song",
+          "Sijian Ren",
+          "Xinyuan Hu",
+          "Jie Feng",
+          "Chen Gao",
+          "Yong Li"
+        ],
+        "journal_name": "Patterns",
+        "cited_by_count": 533,
+        "publication_date": "2025/10/01 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/www_journals_elsevier_com.ico",
+        "source_homepage_url": "www.journals.elsevier.com",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Researchers are exploring the concept of 'thought,' which represents intermediate reasoning steps, allowing LLMs to emulate humanlike reasoning processes.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Recent work has applied reinforcement learning (RL) to train LLMs by searching for high-quality reasoning trajectories through trial-and-error exploration.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "In parallel, studies also demonstrate that allowing LLMs to 'think' with longer chains of intermediate tokens at test time can also substantially improve reasoning accuracy.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "The combination of training and test-time advancements outlines a path toward large reasoning models.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 5,
+        "title": "A Survey of Efficient Reasoning for Large Reasoning Models: Language, Multimodality, and Beyond",
+        "abstract": "Recent Large Reasoning Models (LRMs), such as DeepSeek-R1 and OpenAI o1, have demonstrated strong performance gains by scaling up the length of Chain-of-Thought (CoT) reasoning during inference. However, a growing concern lies in their tendency to produce excessively long reasoning traces, which are often filled with redundant content (e.g., repeated definitions), over-analysis of simple problems, and superficial exploration of multiple reasoning paths for harder tasks. This inefficiency introduces significant challenges for training, inference, and real-world deployment (e.g., in agent-based systems), where token economy is critical. In this survey, we provide a comprehensive overview of recent efforts aimed at improving reasoning efficiency in LRMs, with a particular focus on the unique challenges that arise in this new paradigm. We identify common patterns of inefficiency, examine methods proposed across the LRM lifecycle, i.e., from pretraining to inference, and discuss promising future directions for research. To support ongoing development, we also maintain a real-time GitHub repository tracking recent progress in the field. We hope this survey serves as a foundation for further exploration and inspires innovation in this rapidly evolving area.",
+        "url": "http://arxiv.org/abs/2503.21614",
+        "authors": [
+          "Xiaoye Qu",
+          "Yafu Li",
+          "Zhaochen Su",
+          "Weigao Sun",
+          "Jianhao Yan",
+          "Dongrui Liu",
+          "Cui, Ganqu",
+          "Daizong Liu",
+          "Liang, Shuxian",
+          "Junxian He",
+          "Li Peng",
+          "Wei Wei",
+          "Jing Shao",
+          "Chaochao Lu",
+          "Zhang Yue",
+          "Xian‐Sheng Hua",
+          "Bowen Zhou",
+          "Yu Cheng"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 156,
+        "publication_date": "2025/03/27 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Recent Large Reasoning Models (LRMs), such as DeepSeek-R1 and OpenAI o1, have demonstrated strong performance gains by scaling up the length of Chain-of-Thought (CoT) reasoning during inference.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "However, a growing concern lies in their tendency to produce excessively long reasoning traces, which are often filled with redundant content (e.g., repeated definitions), over-analysis of simple problems, and superficial exploration of multiple reasoning paths for harder tasks.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "This inefficiency introduces significant challenges for training, inference, and real-world deployment (e.g., in agent-based systems), where token economy is critical.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "In this survey, we provide a comprehensive overview of recent efforts aimed at improving reasoning efficiency in LRMs, with a particular focus on the unique challenges that arise in this new paradigm. We identify common patterns of inefficiency, examine methods proposed across the LRM lifecycle, i.e., from pretraining to inference, and discuss promising future directions for research.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 6,
+        "title": "The Illusion of Thinking",
+        "abstract": "Recent generations of frontier language models have introduced Large Reasoning Models (LRMs) that generate detailed thinking processes before providing answers. While these models demonstrate improved performance on reasoning benchmarks, their fundamental capabilities, scaling properties, and limitations remain insufficiently understood. Current evaluations primarily focus on established mathematical and coding benchmarks, emphasizing final answer accuracy. However, this evaluation paradigm often suffers from data contamination and does not provide insights into the reasoning traces’ structure and quality. In this work, we systematically investigate these gaps with the help of controllable puzzle environments that allow precise manipulation of compositional complexity while maintaining consistent logical structures. This setup enables the analysis of not only final answers but also the internal reasoning traces, offering insights into how LRMs “think”. Through extensive experimentation across diverse puzzles, we show that frontier LRMs face a complete accuracy collapse beyond certain complexities. Moreover, they exhibit a counterintuitive scaling limit: their reasoning effort increases with problem complexity up to a point, then declines despite having an adequate token budget. By comparing LRMs with their standard LLM counterparts under equivalent inference compute, we identify three performance regimes: (1) lowcomplexity tasks where standard models surprisingly outperform LRMs, (2) medium-complexity tasks where additional thinking in LRMs demonstrates advantage, and (3) high-complexity tasks where both models experience complete collapse. We found that LRMs have limitations in exact computation: they fail to use explicit algorithms and reason inconsistently across puzzles. We also investigate the reasoning traces in more depth, studying the patterns of explored solutions and analyzing the models’ computational behavior, shedding light on their strengths, limitations, and ultimately raising crucial questions about their true reasoning capabilities.",
+        "url": "https://doi.org/10.70777/si.v2i6.15919",
+        "authors": [
+          "Parshin Shojaee",
+          "Iman Mirzadeh",
+          "Keivan Alizadeh",
+          "Maxwell Horton",
+          "Samy Bengio A",
+          "Mehrdad Farajtabar"
+        ],
+        "journal_name": "SuperIntelligence - Robotics - Safety & Alignment",
+        "cited_by_count": 193,
+        "publication_date": "2025/09/23 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Through extensive experimentation across diverse puzzles, we show that frontier LRMs face a complete accuracy collapse beyond certain complexities.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Moreover, they exhibit a counterintuitive scaling limit: their reasoning effort increases with problem complexity up to a point, then declines despite having an adequate token budget.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "By comparing LRMs with their standard LLM counterparts under equivalent inference compute, we identify three performance regimes: (1) lowcomplexity tasks where standard models surprisingly outperform LRMs, (2) medium-complexity tasks where additional thinking in LRMs demonstrates advantage, (3) high-complexity tasks where both models experience complete collapse.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "We found that LRMs have limitations in exact computation: they fail to use explicit algorithms and reason inconsistently across puzzles.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 7,
+        "title": "Thinkless: LLM Learns When to Think",
+        "abstract": "Reasoning Language Models, capable of extended chain-of-thought reasoning, have demonstrated remarkable performance on tasks requiring complex logical inference. However, applying elaborate reasoning for all queries often results in substantial computational inefficiencies, particularly when many problems admit straightforward solutions. This motivates an open question: Can LLMs learn when to think? To answer this, we propose Thinkless, a learnable framework that empowers an LLM to adaptively select between short-form and long-form reasoning, based on both task complexity and the model's ability. Thinkless is trained under a reinforcement learning paradigm and employs two control tokens, for concise responses and for detailed reasoning. At the core of our method is a Decoupled Group Relative Policy Optimization (DeGRPO) algorithm, which decomposes the learning objective of hybrid reasoning into two components: (1) a control token loss that governs the selection of the reasoning mode, and (2) a response loss that improves the accuracy of the generated answers. This decoupled formulation enables fine-grained control over the contributions of each objective, stabilizing training and effectively preventing collapse observed in vanilla GRPO. Empirically, on several benchmarks such as Minerva Algebra, MATH-500, and GSM8K, Thinkless is able to reduce the usage of long-chain thinking by 50% - 90%, significantly improving the efficiency of Reasoning Language Models. The code is available at https://github.com/VainF/Thinkless",
+        "url": "https://doi.org/10.52202/085713-5060",
+        "authors": [
+          "Gongfan Fang",
+          "Xinyin Ma",
+          "Xinchao Wang"
+        ],
+        "journal_name": "neural information processing systems",
+        "cited_by_count": 107,
+        "publication_date": "2025/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "However, applying elaborate reasoning for all queries often results in substantial computational inefficiencies, particularly when many problems admit straightforward solutions.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "To answer this, we propose Thinkless, a learnable framework that empowers an LLM to adaptively select between short-form and long-form reasoning, based on both task complexity and the model's ability.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Thinkless is trained under a reinforcement learning paradigm and employs two control tokens, for concise responses and for detailed reasoning.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "At the core of our method is a Decoupled Group Relative Policy Optimization (DeGRPO) algorithm, which decomposes the learning objective of hybrid reasoning into two components: (1) a control token loss that governs the selection of the reasoning mode, and (2) a response loss that improves the accuracy of the generated answers.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 8,
+        "title": "Chain-of-Thought Hub: A Continuous Effort to Measure Large Language Models' Reasoning Performance",
+        "abstract": "As large language models (LLMs) are continuously being developed, their evaluation becomes increasingly important yet challenging. This work proposes Chain-of-Thought Hub, an open-source evaluation suite on the multi-step reasoning capabilities of large language models. We are interested in this setting for two reasons: (1) from the behavior of GPT and PaLM model family, we observe that complex reasoning is likely to be a key differentiator between weaker and stronger LLMs; (2) we envisage large language models to become the next-generation computational platform and foster an ecosystem of LLM-based new applications, this naturally requires the foundation models to perform complex tasks that often involve the composition of linguistic and logical operations. Our approach is to compile a suite of challenging reasoning benchmarks to track the progress of LLMs. Our current results show that: (1) model scale clearly correlates with reasoning capabilities; (2) As of May 2023, Claude-v1.3 and PaLM-2 are the only two models that are comparable with GPT-4, while open-sourced models still lag behind; (3) LLaMA-65B performs closely to code-davinci-002, indicating that with successful further development such as reinforcement learning from human feedback (RLHF), it has great potential to be close to GPT-3.5-Turbo. Our results also suggest that for the open-source efforts to catch up, the community may focus more on building better base models and exploring RLHF.",
+        "url": "http://arxiv.org/abs/2305.17306",
+        "authors": [
+          "Yao Fu",
+          "Litu Ou",
+          "Mingyu Chen",
+          "Yuhao Wan",
+          "Hao Ming Peng",
+          "Tushar Khot"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 116,
+        "publication_date": "2023/05/26 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Our current results show that: (1) model scale clearly correlates with reasoning capabilities; (2) As of May 2023, Claude-v1.3 and PaLM-2 are the only two models that are comparable with GPT-4, while open-sourced models still lag behind; (3) LLaMA-65B performs closely to code-davinci-002, indicating that with successful further development such as reinforcement learning from human feedback (RLHF), it has great potential to be close to GPT-3.5-Turbo.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Our results also suggest that for the open-source efforts to catch up, the community may focus more on building better base models and exploring RLHF.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 9,
+        "title": "Learn to Reason Efficiently with Adaptive Length-based Reward Shaping",
+        "abstract": "Large Reasoning Models (LRMs) have shown remarkable capabilities in solving complex problems through reinforcement learning (RL), particularly by generating long reasoning traces. However, these extended outputs often exhibit substantial redundancy, which limits the efficiency of LRMs. In this paper, we investigate RL-based approaches to promote reasoning efficiency. Specifically, we first present a unified framework that formulates various efficient reasoning methods through the lens of length-based reward shaping. Building on this perspective, we propose a novel Length-bAsed StEp Reward shaping method (LASER), which employs a step function as the reward, controlled by a target length. LASER surpasses previous methods, achieving a superior Pareto-optimal balance between performance and efficiency. Next, we further extend LASER based on two key intuitions: (1) The reasoning behavior of the model evolves during training, necessitating reward specifications that are also adaptive and dynamic; (2) Rather than uniformly encouraging shorter or longer chains of thought (CoT), we posit that length-based reward shaping should be difficulty-aware i.e., it should penalize lengthy CoTs more for easy queries. This approach is expected to facilitate a combination of fast and slow thinking, leading to a better overall tradeoff. The resulting method is termed LASER-D (Dynamic and Difficulty-aware). Experiments on DeepSeek-R1-Distill-Qwen-1.5B, DeepSeek-R1-Distill-Qwen-7B, and DeepSeek-R1-Distill-Qwen-32B show that our approach significantly enhances both reasoning performance and response length efficiency. For instance, LASER-D and its variant achieve a +6.1 improvement on AIME2024 while reducing token usage by 63%. Further analysis reveals our RL-based compression produces more concise reasoning patterns with less redundant \"self-reflections\". Resources are at https://github.com/hkust-nlp/Laser.",
+        "url": "http://arxiv.org/abs/2505.15612",
+        "authors": [
+          "Wei Liu",
+          "Ruochen Zhou",
+          "Deng, Yiyun",
+          "Yuzhen Huang",
+          "Junteng Liu",
+          "Deng, Yuntian",
+          "Yizhe Zhang",
+          "Junxian He"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 85,
+        "publication_date": "2025/05/21 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "In this paper, we investigate RL-based approaches to promote reasoning efficiency. Specifically, we first present a unified framework that formulates various efficient reasoning methods through the lens of length-based reward shaping.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Building on this perspective, we propose a novel Length-bAsed StEp Reward shaping method (LASER), which employs a step function as the reward, controlled by a target length. LASER surpasses previous methods, achieving a superior Pareto-optimal balance between performance and efficiency.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Next, we further extend LASER based on two key intuitions: (1) The reasoning behavior of the model evolves during training, necessitating reward specifications that are also adaptive and dynamic; (2) Rather than uniformly encouraging shorter or longer chains of thought (CoT), we posit that length-based reward shaping should be difficulty-aware i.e., it should penalize lengthy CoTs more for easy queries. This approach is expected to facilitate a combination of fast and slow thinking, leading to a better overall tradeoff.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "Experiments on DeepSeek-R1-Distill-Qwen-1.5B, DeepSeek-R1-Distill-Qwen-7B, and DeepSeek-R1-Distill-Qwen-32B show that our approach significantly enhances both reasoning performance and response length efficiency. For instance, LASER-D and its variant achieve a +6.1 improvement on AIME2024 while reducing token usage by 63%. Further analysis reveals our RL-based compression produces more concise reasoning patterns with less redundant 'self-reflections'.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 10,
+        "title": "Efficient Inference for Large Reasoning Models: A Survey",
+        "abstract": "Large Reasoning Models (LRMs) significantly improve the reasoning ability of Large Language Models (LLMs) by learning to reason, exhibiting promising performance in solving complex tasks. However, their deliberative reasoning process leads to inefficiencies in token usage, memory consumption, and inference time. Thus, this survey provides a review of efficient inference methods designed specifically for LRMs, focusing on mitigating token inefficiency while preserving the reasoning quality. The overview structure of this paper is shown in Figure 1. First, we introduce a taxonomy to group the recent methods into two main categories: (a) explicit compact Chain-of-Thought (CoT), which reduces tokens while keeping the explicit reasoning structure, and (b) implicit latent CoT, which encodes reasoning steps within hidden representations instead of explicit tokens. Meanwhile, we discuss their strengths and weaknesses. Then, we conduct empirical analyses on existing methods from reasoning scenarios, object functions, and performance & efficiency aspects. Besides, we present open challenges in this field, including human-centric controllable reasoning, trade-off between interpretability and efficiency of reasoning, ensuring the safety of efficient reasoning, and broader applications of efficient reasoning. In addition, we highlight key insights for enhancing LRMs' inference efficiency via techniques such as model merging, new architectures, and agent routers. We hope this work serves as a valuable guide, helping researchers overcome challenges in this vibrant field.",
+        "url": "https://doi.org/10.1109/tpami.2026.3701928",
+        "authors": [
+          "Yue Liu",
+          "J. F. Wu",
+          "Yufei He",
+          "Ruihan Gong",
+          "Jun Xia",
+          "Liang Li",
+          "Hongcheng Gao",
+          "Hongyu Chen",
+          "Baolong Bi",
+          "Jiaheng Zhang",
+          "Zhiqi Huang",
+          "Bryan Hooi",
+          "Stan Ziqing Li",
+          "Keqin Li"
+        ],
+        "journal_name": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+        "cited_by_count": 81,
+        "publication_date": "2026/06/09 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/www_computer_org.ico",
+        "source_homepage_url": "www.computer.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Thus, this survey provides a review of efficient inference methods designed specifically for LRMs, focusing on mitigating token inefficiency while preserving the reasoning quality.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "First, we introduce a taxonomy to group the recent methods into two main categories: (a) explicit compact Chain-of-Thought (CoT), which reduces tokens while keeping the explicit reasoning structure, and (b) implicit latent CoT, which encodes reasoning steps within hidden representations instead of explicit tokens.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "In addition, we highlight key insights for enhancing LRMs' inference efficiency via techniques such as model merging, new architectures, and agent routers.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 11,
+        "title": "Plan and Budget: Effective and Efficient Test-Time Scaling on Reasoning Large Language Models",
+        "abstract": "Large Language Models (LLMs) have achieved remarkable success in complex reasoning tasks, but their inference remains computationally inefficient. We observe a common failure mode in many prevalent LLMs, overthinking, where models generate verbose and tangential reasoning traces even for simple queries. Recent work has tried to mitigate this by enforcing fixed token budgets, however, this can lead to underthinking, especially on harder problems. Through empirical analysis, we identify that this inefficiency often stems from unclear problem-solving strategies. To formalize this, we develop a theoretical model, BAM (Budget Allocation Model), which models reasoning as a sequence of sub-questions with varying uncertainty, and introduce the E3 metric to capture the trade-off between correctness and computation efficiency. Building on theoretical results from BAM, we propose Plan-and-Budget, a model-agnostic, test-time framework that decomposes complex queries into sub-questions and allocates token budgets based on estimated complexity using adaptive scheduling. Plan-and-Budget improves reasoning efficiency across a range of tasks and models, achieving up to 70% accuracy gains, 39% token reduction, and 193.8% improvement in E3. Notably, it improves the efficiency of a smaller model (DS-Qwen-32B) to match the efficiency of a larger model (DS-LLaMA-70B), demonstrating Plan-and-Budget's ability to close performance gaps without retraining. Our code is available at https://github.com/junhongmit/P-and-B.",
+        "url": "http://arxiv.org/abs/2505.16122",
+        "authors": [
+          "Jun‐Hong Lin",
+          "Zeng, Xinyue",
+          "Zhu, Jie",
+          "Song Wang",
+          "Julian Shun",
+          "Jun Wu",
+          "Dawei Zhou"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 39,
+        "publication_date": "2025/05/22 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "We observe a common failure mode in many prevalent LLMs, overthinking, where models generate verbose and tangential reasoning traces even for simple queries.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Through empirical analysis, we identify that this inefficiency often stems from unclear problem-solving strategies.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Building on theoretical results from BAM, we propose Plan-and-Budget, a model-agnostic, test-time framework that decomposes complex queries into sub-questions and allocates token budgets based on estimated complexity using adaptive scheduling.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "Plan-and-Budget improves reasoning efficiency across a range of tasks and models, achieving up to 70% accuracy gains, 39% token reduction, and 193.8% improvement in E3.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 12,
+        "title": "Meta-Reasoner: Dynamic Guidance for Optimized Inference-time Reasoning in Large Language Models",
+        "abstract": "Large Language Models (LLMs) often struggle with computational efficiency and error propagation in multi-step reasoning tasks.While recent advancements on prompting and posttraining have enabled LLMs to perform stepwise reasoning, they still tend to explore unproductive solution paths without effective backtracking or strategy adjustment.In this paper, we propose Meta-Reasoner, a new framework that empowers LLMs to \"think about how to think\".It optimizes the inference process by dynamically adapting reasoning strategies in real-time.Our approach employs contextual multi-armed bandits (CMABs) to learn an adaptive policy.It learns to evaluate the current state of LLM's reasoning and determine optimal strategy that is most likely to lead to a successful outcome during inference, like whether to backtrack, switch to a new approach, or restart the problem-solving process.This meta-guidance helps avoid unproductive paths exploration during inference and hence improves computational efficiency.We evaluate Meta-Reasoner on math problems (e.g., Game-of-24, TheoremQA) and scientific tasks (e.g., SciBench).Results show that our method outperform previous SOTA methods by 9-12% in accuracy, while reducing inference time by 28-35% under the same compute budget.Additional experiments on creative writing demonstrate the generalizability of our approach to diverse reasoning-intensive tasks.",
+        "url": "https://doi.org/10.18653/v1/2026.findings-acl.649",
+        "authors": [
+          "Yuan Sui",
+          "Ying He",
+          "Tri Cao",
+          "Simeng Han",
+          "Yulin Chen",
+          "Bryan Hooi"
+        ],
+        "journal_name": "Findings of the Association for Computational Linguistics: ACL (Findings of ACL)",
+        "cited_by_count": 44,
+        "publication_date": "2026/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "In this paper, we propose Meta-Reasoner, a new framework that empowers LLMs to 'think about how to think'.It optimizes the inference process by dynamically adapting reasoning strategies in real-time.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Our approach employs contextual multi-armed bandits (CMABs) to learn an adaptive policy.It learns to evaluate the current state of LLM's reasoning and determine optimal strategy that is most likely to lead to a successful outcome during inference, like whether to backtrack, switch to a new approach, or restart the problem-solving process.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Results show that our method outperform previous SOTA methods by 9-12% in accuracy, while reducing inference time by 28-35% under the same compute budget.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 13,
+        "title": "Large Language Model Reasoning Failures",
+        "abstract": "Large Language Models (LLMs) have exhibited remarkable reasoning capabilities, achieving impressive results across a wide range of tasks. Despite these advances, significant reasoning failures persist, occurring even in seemingly simple scenarios. To systematically understand and address these shortcomings, we present the first comprehensive survey dedicated to reasoning failures in LLMs. We introduce a novel categorization framework that distinguishes reasoning into embodied and non-embodied types, with the latter further subdivided into informal (intuitive) and formal (logical) reasoning. In parallel, we classify reasoning failures along a complementary axis into three types: fundamental failures intrinsic to LLM architectures that broadly affect downstream tasks; application-specific limitations that manifest in particular domains; and robustness issues characterized by inconsistent performance across minor variations. For each reasoning failure, we provide a clear definition, analyze existing studies, explore root causes, and present mitigation strategies. By unifying fragmented research efforts, our survey provides a structured perspective on systemic weaknesses in LLM reasoning, offering valuable insights and guiding future research towards building stronger, more reliable, and robust reasoning capabilities. We additionally release a comprehensive collection of research works on LLM reasoning failures, as a GitHub repository at https://github.com/Peiyang-Song/Awesome-LLM-Reasoning-Failures, to provide an easy entry point to this area.",
+        "url": "http://arxiv.org/abs/2602.06176",
+        "authors": [
+          "Peiyang Song",
+          "Pengrui Han",
+          "Noah D. Goodman"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 47,
+        "publication_date": "2026/02/05 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Despite these advances, significant reasoning failures persist, occurring even in seemingly simple scenarios.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "We introduce a novel categorization framework that distinguishes reasoning into embodied and non-embodied types, with the latter further subdivided into informal (intuitive) and formal (logical) reasoning.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "In parallel, we classify reasoning failures along a complementary axis into three types: fundamental failures intrinsic to LLM architectures that broadly affect downstream tasks; application-specific limitations that manifest in particular domains; and robustness issues characterized by inconsistent performance across minor variations.",
+            "translation": ""
+          },
+          {
+            "quote_number": 4,
+            "quote": "For each reasoning failure, we provide a clear definition, analyze existing studies, explore root causes, and present mitigation strategies.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 14,
+        "title": "Efficient Reasoning for LLMs through Speculative Chain-of-Thought",
+        "abstract": "Large reasoning language models such as OpenAI-o1 and Deepseek-R1 have recently attracted widespread attention due to their impressive task-solving abilities.However, the enormous model size and the generation of lengthy thought chains introduce significant reasoning costs and response latency.Existing methods for efficient reasoning mainly focus on reducing the number of model parameters or shortening the chain-of-thought length.In this paper, we introduce Speculative Chainof-Thought (SCoT), which reduces reasoning latency from another perspective by accelerated average reasoning speed through large and small model collaboration.SCoT conducts thought-level drafting using a lightweight draft model.Then it selects the best CoT draft and corrects the error cases with the target model.The proposed thinking behavior alignment improves the efficiency of drafting and the draft selection strategy maintains the prediction accuracy of the target model for complex tasks.Experimental results on GSM8K, MATH, GaoKao, CollegeMath and Olympiad datasets show that SCoT reduces reasoning latency by 48%∼66% and 21%∼49% for Deepseek-R1-Distill-Qwen-32B and Deepseek-R1-Distill-Llama-70B while achieving neartarget-model-level performance.",
+        "url": "https://doi.org/10.18653/v1/2026.findings-acl.76",
+        "authors": [
+          "Jikai Wang",
+          "Juntao Li",
+          "Jianye Hou",
+          "Yan Bowen",
+          "Lijun Wu",
+          "Zhang Min"
+        ],
+        "journal_name": "Findings of the Association for Computational Linguistics: ACL (Findings of ACL)",
+        "cited_by_count": 25,
+        "publication_date": "2026/01/01 00:00:00",
+        "site_icon": "",
+        "source_homepage_url": "",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Existing methods for efficient reasoning mainly focus on reducing the number of model parameters or shortening the chain-of-thought length.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "In this paper, we introduce Speculative Chainof-Thought (SCoT), which reduces reasoning latency from another perspective by accelerated average reasoning speed through large and small model collaboration.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Experimental results on GSM8K, MATH, GaoKao, CollegeMath and Olympiad datasets show that SCoT reduces reasoning latency by 48%∼66% and 21%∼49% for Deepseek-R1-Distill-Qwen-32B and Deepseek-R1-Distill-Llama-70B while achieving neartarget-model-level performance.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 15,
+        "title": "Benchmarking Reasoning Robustness in Large Language Models",
+        "abstract": "Despite the recent success of large language models (LLMs) in reasoning such as DeepSeek, we for the first time identify a key dilemma in reasoning robustness and generalization: significant performance degradation on novel or incomplete data, suggesting a reliance on memorized patterns rather than systematic reasoning. Our closer examination reveals four key unique limitations underlying this issue:(1) Positional bias--models favor earlier queries in multi-query inputs but answering the wrong one in the latter (e.g., GPT-4o's accuracy drops from 75.8 percent to 72.8 percent); (2) Instruction sensitivity--performance declines by 5.0 to 7.5 percent in the Qwen2.5 Series and by 5.0 percent in DeepSeek-V3 with auxiliary guidance; (3) Numerical fragility--value substitution sharply reduces accuracy (e.g., GPT-4o drops from 97.5 percent to 82.5 percent, GPT-o1-mini drops from 97.5 percent to 92.5 percent); and (4) Memory dependence--models resort to guesswork when missing critical data. These findings further highlight the reliance on heuristic recall over rigorous logical inference, demonstrating challenges in reasoning robustness. To comprehensively investigate these robustness challenges, this paper introduces a novel benchmark, termed as Math-RoB, that exploits hallucinations triggered by missing information to expose reasoning gaps. This is achieved by an instruction-based approach to generate diverse datasets that closely resemble training distributions, facilitating a holistic robustness assessment and advancing the development of more robust reasoning frameworks. Bad character(s) in field Abstract.",
+        "url": "http://arxiv.org/abs/2503.04550",
+        "authors": [
+          "Tong Yu",
+          "Yongcheng Jing",
+          "Xikun Zhang",
+          "Wentao Jiang",
+          "Wenjie Wu",
+          "Yingjie Wang",
+          "Wenbin Hu",
+          "Bo Du",
+          "Dacheng Tao"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 41,
+        "publication_date": "2025/03/06 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Despite the recent success of large language models (LLMs) in reasoning such as DeepSeek, we for the first time identify a key dilemma in reasoning robustness and generalization: significant performance degradation on novel or incomplete data, suggesting a reliance on memorized patterns rather than systematic reasoning.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Our closer examination reveals four key unique limitations underlying this issue:(1) Positional bias--models favor earlier queries in multi-query inputs but answering the wrong one in the latter (e.g., GPT-4o's accuracy drops from 75.8 percent to 72.8 percent); (2) Instruction sensitivity--performance declines by 5.0 to 7.5 percent in the Qwen2.5 Series and by 5.0 percent in DeepSeek-V3 with auxiliary guidance; (3) Numerical fragility--value substitution sharply reduces accuracy (e.g., GPT-4o drops from 97.5 percent to 82.5 percent, GPT-o1-mini drops from 97.5 percent to 92.5 percent); and (4) Memory dependence--models resort to guesswork when missing critical data.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "These findings further highlight the reliance on heuristic recall over rigorous logical inference, demonstrating challenges in reasoning robustness.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 16,
+        "title": "Can Large Language Models Reason? A Characterization via 3-SAT",
+        "abstract": "Large Language Models (LLMs) have been touted as AI models possessing advanced reasoning abilities. However, recent works have shown that LLMs often bypass true reasoning using shortcuts, sparking skepticism. To study the reasoning capabilities in a principled fashion, we adopt a computational theory perspective and propose an experimental protocol centered on 3-SAT -- the prototypical NP-complete problem lying at the core of logical reasoning and constraint satisfaction tasks. Specifically, we examine the phase transitions in random 3-SAT and characterize the reasoning abilities of LLMs by varying the inherent hardness of the problem instances. Our experimental evidence shows that LLMs are incapable of performing true reasoning, as required for solving 3-SAT problems. Moreover, we observe significant performance variation based on the inherent hardness of the problems -- performing poorly on harder instances and vice versa. Importantly, we show that integrating external reasoners can considerably enhance LLM performance. By following a principled experimental protocol, our study draws concrete conclusions and moves beyond the anecdotal evidence often found in LLM reasoning research.",
+        "url": "http://arxiv.org/abs/2408.07215",
+        "authors": [
+          "Rishi Hazra",
+          "Gabriele Venturato",
+          "Pedro Zuidberg Dos Martires",
+          "Luc De Raedt"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 19,
+        "publication_date": "2024/08/13 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "Our experimental evidence shows that LLMs are incapable of performing true reasoning, as required for solving 3-SAT problems.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Moreover, we observe significant performance variation based on the inherent hardness of the problems -- performing poorly on harder instances and vice versa.",
+            "translation": ""
+          },
+          {
+            "quote_number": 3,
+            "quote": "Importantly, we show that integrating external reasoners can considerably enhance LLM performance.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 17,
+        "title": "Large Reasoning Models are not thinking straight: on the unreliability of thinking trajectories",
+        "abstract": "Large Language Models (LLMs) trained via Reinforcement Learning (RL) have recently achieved impressive results on reasoning benchmarks. Yet, growing evidence shows that these models often generate longer but ineffective chains of thought (CoTs), calling into question whether benchmark gains reflect real reasoning improvements. We present new evidence of overthinking, where models disregard correct solutions even when explicitly provided, instead continuing to generate unnecessary reasoning steps that often lead to incorrect conclusions. Experiments on three state-of-the-art models using the AIME2024 math benchmark reveal critical limitations in these models ability to integrate corrective information, posing new challenges for achieving robust and interpretable reasoning.",
+        "url": "http://arxiv.org/abs/2507.00711",
+        "authors": [
+          "Jhouben Cuesta-Ramirez",
+          "Samuel Beaussant",
+          "Mehdi Mounsif"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 8,
+        "publication_date": "2025/07/01 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "We present new evidence of overthinking, where models disregard correct solutions even when explicitly provided, instead continuing to generate unnecessary reasoning steps that often lead to incorrect conclusions.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "Experiments on three state-of-the-art models using the AIME2024 math benchmark reveal critical limitations in these models ability to integrate corrective information, posing new challenges for achieving robust and interpretable reasoning.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      },
+      {
+        "id": 18,
+        "title": "Have Large Language Models Learned to Reason? A Characterization via 3-SAT Phase Transition",
+        "abstract": "Large Language Models (LLMs) have been touted as AI models possessing advanced reasoning abilities. In theory, autoregressive LLMs with Chain-of-Thought (CoT) can perform more serial computations to solve complex reasoning tasks. However, recent studies suggest that, despite this capacity, LLMs do not truly learn to reason but instead fit on statistical features. To study the reasoning capabilities in a principled fashion, we adopt a computational theory perspective and propose an experimental protocol centered on 3-SAT -- the prototypical NP-complete problem lying at the core of logical reasoning and constraint satisfaction tasks. Specifically, we examine the phase transitions in random 3-SAT and characterize the reasoning abilities of state-of-the-art LLMs by varying the inherent hardness of the problem instances. By comparing DeepSeek R1 with other LLMs, our findings reveal two key insights (1) LLM accuracy drops significantly on harder instances, suggesting all current models struggle when statistical shortcuts are unavailable (2) Unlike other LLMs, R1 shows signs of having learned the underlying reasoning. Following a principled experimental protocol, our study moves beyond the benchmark-driven evidence often found in LLM reasoning research. Our findings highlight important gaps and suggest clear directions for future research.",
+        "url": "http://arxiv.org/abs/2504.03930",
+        "authors": [
+          "Rishi Hazra",
+          "Gabriele Venturato",
+          "Pedro Zuidberg Dos Martires",
+          "Luc De Raedt"
+        ],
+        "journal_name": "arXiv (Cornell University)",
+        "cited_by_count": 11,
+        "publication_date": "2025/04/04 00:00:00",
+        "site_icon": "https://cdn-yb.icon.qq.com/zuowei_dir/arxiv_org.ico",
+        "source_homepage_url": "arxiv.org",
+        "evidences": [
+          {
+            "quote_number": 1,
+            "quote": "However, recent studies suggest that, despite this capacity, LLMs do not truly learn to reason but instead fit on statistical features.",
+            "translation": ""
+          },
+          {
+            "quote_number": 2,
+            "quote": "By comparing DeepSeek R1 with other LLMs, our findings reveal two key insights (1) LLM accuracy drops significantly on harder instances, suggesting all current models struggle when statistical shortcuts are unavailable (2) Unlike other LLMs, R1 shows signs of having learned the underlying reasoning.",
+            "translation": ""
+          }
+        ],
+        "search_classify": 0,
+        "source_type": "academic"
+      }
+    ],
+    "next_frame_id": -1,
+    "finish_code": 0,
+    "finish_reason": "",
+    "pass_through": "",
+    "respage_ready": 1,
+    "figures": [],
+    "figure_ready": 0,
+    "retrieval_source": "academic"
+  },
+  "status": {
+    "code": 0,
+    "msg": "OK"
+  }
+}
