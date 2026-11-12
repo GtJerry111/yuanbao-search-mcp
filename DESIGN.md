@@ -67,11 +67,11 @@ Search WeChat official-account articles via
 
 | Field | Type | Default | Rules |
 |---|---|---|---|
-| `query` | `str` | — | Required unless `account` is provided; max 500 chars |
+| `query` | `str` | — | Required unless `account` is provided; no explicit length cap |
 | `account` | `str \| null` | `null` | Restrict to an account; contains match, case-insensitive |
 | `limit` | `int` | `20` | 1–28 |
 | `sort` | `"relevance" \| "date"` | `"relevance"` | `date` = publish time desc |
-| `days` | `int \| null` | `null` | 1–3650; local filter by publish date |
+| `days` | `int \| null` | `null` | >= 1; local filter by publish date |
 
 **Query composition**
 
@@ -159,7 +159,7 @@ endpoints.
 
 | Field | Type | Default | Rules |
 |---|---|---|---|
-| `query` | `str` | — | Required; max 500 chars |
+| `query` | `str` | — | Required; no explicit length cap |
 | `limit` | `int` | `10` | 1–20; controls core papers only |
 | `include_summary` | `bool` | `false` | AI academic summary |
 | `summary_timeout` | `float` | `45` | 5–120 seconds |
@@ -240,11 +240,11 @@ General web search via `tab=all | gov | media`.
 
 | Field | Type | Default | Rules |
 |---|---|---|---|
-| `query` | `str` | — | Required; max 500 chars |
+| `query` | `str` | — | Required; no explicit length cap |
 | `limit` | `int` | `10` | 1–20 |
 | `scope` | `"all" \| "gov" \| "media"` | `"all"` | Maps to tab |
 | `sort` | `"relevance" \| "date"` | `"relevance"` | Local sort |
-| `days` | `int \| null` | `null` | 1–3650; local filter |
+| `days` | `int \| null` | `null` | >= 1; local filter |
 
 **Output**
 

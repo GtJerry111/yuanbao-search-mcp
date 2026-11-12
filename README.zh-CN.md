@@ -317,7 +317,7 @@ claude mcp add yuanbao-search -- uv run --directory /absolute/path/to/yuanbao-se
 
 ## 配置
 
-将 `config.example.env` 复制为 `.env`，或在客户端的 `env` 配置块中设置 `YUANBAO_*` 环境变量。下表列出全部支持的变量；设计说明见 `DESIGN.md`。
+将 `config.example.env` 复制为 `.env`，或在客户端的 `env` 配置块中设置 `YUANBAO_*` 环境变量。下表列出所有用户可配置的变量；设计说明见 `DESIGN.md`。
 
 | 变量 | 默认值 | 用途 |
 |---|---|---|

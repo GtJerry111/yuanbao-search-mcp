@@ -345,7 +345,7 @@ AND.
 ## Configuration
 
 Copy `config.example.env` to `.env`, or set `YUANBAO_*` variables in the
-client's `env` block. The table below lists every supported variable;
+client's `env` block. The table below lists every user-facing variable;
 `DESIGN.md` has the design rationale.
 
 | Variable | Default | Purpose |

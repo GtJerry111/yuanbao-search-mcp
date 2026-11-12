@@ -347,7 +347,7 @@ class YuanbaoService:
                     warnings.append("Summary figure placeholders were omitted.")
 
         if summary_truncated:
-            warnings.append("AI summary timed out; partial summary returned.")
+            warnings.append("AI summary was truncated; partial summary returned.")
 
         if not core_papers and not sub_questions:
             raise UpstreamError("Academic search failed for both papers and sub-questions")

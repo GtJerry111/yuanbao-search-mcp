@@ -184,7 +184,7 @@ def build_server(settings: Settings) -> MCPServer:
                 limit: Number of core papers, 1-20. Default 10.
                 include_summary: Generate the AI academic summary. Default false.
                 summary_timeout: Summary timeout in seconds, 5-120. Default 45.
-                include_subquestions: Include 8 sub-questions with up to 4 papers each.
+                include_subquestions: Include up to 8 sub-questions with up to 4 papers each.
 
             Returns:
                 Core papers with citation IDs, authors, venue, year, citation count,
