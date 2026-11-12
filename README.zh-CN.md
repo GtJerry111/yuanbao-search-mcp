@@ -167,7 +167,7 @@ claude mcp add yuanbao-search -- uv run --directory /absolute/path/to/yuanbao-se
 | `account` | 字符串或 null | `null` | 仅保留账号名包含该字符串的结果。大小写不敏感的本地后置过滤。 |
 | `limit` | 整数 | `20` | 1–28；超出范围会按服务端上限截断。 |
 | `sort` | `"relevance"` 或 `"date"` | `"relevance"` | `date` 按发布时间从新到旧排序；无日期的结果排在最后。 |
-| `days` | 整数或 null | `null` | 仅保留最近 N 个自然日（含今天）的文章。本地过滤。 |
+| `days` | 整数或 null | `null` | 仅保留最近 N 个自然日（含今天）的文章，N >= 1。本地过滤。 |
 
 返回：
 
@@ -289,7 +289,7 @@ claude mcp add yuanbao-search -- uv run --directory /absolute/path/to/yuanbao-se
 | `limit` | 整数 | `10` | 1–20；超出范围会按服务端上限截断。 |
 | `scope` | `"all"`、`"gov"` 或 `"media"` | `"all"` | 全部结果、政府结果或主流媒体结果。 |
 | `sort` | `"relevance"` 或 `"date"` | `"relevance"` | `date` 按日期从新到旧排序；无日期的结果排在最后。 |
-| `days` | 整数或 null | `null` | 仅保留最近 N 个自然日（含今天）的结果。本地过滤。 |
+| `days` | 整数或 null | `null` | 仅保留最近 N 个自然日（含今天）的结果，N >= 1。本地过滤。 |
 
 返回：
 
@@ -339,6 +339,8 @@ claude mcp add yuanbao-search -- uv run --directory /absolute/path/to/yuanbao-se
 | `YUANBAO_ACADEMIC_SUMMARY_TIMEOUT` | `45` | 总结超时时间（秒） |
 | `YUANBAO_ARTICLE_MAX_CHARS` | `20000` | 文章截断默认字符数 |
 | `YUANBAO_REQUEST_TIMEOUT` | `20` | 单次请求超时时间 |
+| `YUANBAO_CONNECT_TIMEOUT` | `10` | 连接超时时间（秒） |
+| `YUANBAO_MAX_RETRIES` | `2` | 429/5xx/超时的重试次数 |
 | `YUANBAO_MIN_INTERVAL` | `1.0` | 限速间隔（秒） |
 | `YUANBAO_CACHE_TTL` | `300` | 搜索缓存 TTL |
 | `YUANBAO_ARTICLE_CACHE_TTL` | `1800` | 文章缓存 TTL |

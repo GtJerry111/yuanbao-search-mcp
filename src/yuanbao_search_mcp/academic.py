@@ -197,7 +197,7 @@ def parse_sub_questions(payload: dict[str, Any]) -> list[AcademicSubQuestion]:
                 )
             )
         result.append(AcademicSubQuestion(question=question, papers=papers[:4]))
-    return result
+    return result[:8]
 
 
 def parse_summary_frame(payload: dict[str, Any]) -> tuple[str, int | None, bool]:

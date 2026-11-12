@@ -179,7 +179,7 @@ Search WeChat official-account articles indexed by Yuanbao.
 | `account` | string or null | `null` | Restrict to accounts whose name contains this string. Case-insensitive local post-filter. |
 | `limit` | integer | `20` | 1–28; values are clamped to the server cap. |
 | `sort` | `"relevance"` or `"date"` | `"relevance"` | `date` sorts newest first; undated results go last. |
-| `days` | integer or null | `null` | Keep articles from the last N calendar days, including today. Local filter. |
+| `days` | integer or null | `null` | Keep articles from the last N calendar days, including today; N >= 1. Local filter. |
 
 Returns:
 
@@ -314,7 +314,7 @@ Search the general web through Yuanbao.
 | `limit` | integer | `10` | 1–20; values are clamped to the server cap. |
 | `scope` | `"all"`, `"gov"`, or `"media"` | `"all"` | All results, government results, or mainstream-media results. |
 | `sort` | `"relevance"` or `"date"` | `"relevance"` | `date` sorts newest first; undated results go last. |
-| `days` | integer or null | `null` | Keep results from the last N calendar days, including today. Local filter. |
+| `days` | integer or null | `null` | Keep results from the last N calendar days, including today; N >= 1. Local filter. |
 
 Returns:
 
@@ -368,6 +368,8 @@ client's `env` block. The table below lists every supported variable;
 | `YUANBAO_ACADEMIC_SUMMARY_TIMEOUT` | `45` | Summary timeout seconds |
 | `YUANBAO_ARTICLE_MAX_CHARS` | `20000` | Default article truncation |
 | `YUANBAO_REQUEST_TIMEOUT` | `20` | Per-request timeout |
+| `YUANBAO_CONNECT_TIMEOUT` | `10` | Connect timeout in seconds |
+| `YUANBAO_MAX_RETRIES` | `2` | Retry attempts for 429/5xx/timeouts |
 | `YUANBAO_MIN_INTERVAL` | `1.0` | Rate limit seconds |
 | `YUANBAO_CACHE_TTL` | `300` | Search cache TTL |
 | `YUANBAO_ARTICLE_CACHE_TTL` | `1800` | Article cache TTL |

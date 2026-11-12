@@ -318,6 +318,8 @@ Environment variables (prefix `YUANBAO_`), `.env` supported.
 | `YUANBAO_ACADEMIC_SUMMARY_TIMEOUT` | `45` | Summary timeout seconds |
 | `YUANBAO_ARTICLE_MAX_CHARS` | `20000` | Default article truncation |
 | `YUANBAO_REQUEST_TIMEOUT` | `20` | Per-request timeout |
+| `YUANBAO_CONNECT_TIMEOUT` | `10` | Connect timeout in seconds |
+| `YUANBAO_MAX_RETRIES` | `2` | Retry attempts for 429/5xx/timeouts |
 | `YUANBAO_MIN_INTERVAL` | `1.0` | Rate limit seconds |
 | `YUANBAO_CACHE_TTL` | `300` | Search cache TTL |
 | `YUANBAO_ARTICLE_CACHE_TTL` | `1800` | Article cache TTL |

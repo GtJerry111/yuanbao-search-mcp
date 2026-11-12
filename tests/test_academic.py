@@ -124,6 +124,28 @@ def test_parse_sub_questions() -> None:
     assert sub_questions[0].papers[0].title
 
 
+def test_parse_sub_questions_caps_at_eight() -> None:
+    payload = {
+        "data": {
+            "sub_queries": [
+                {
+                    "query": f"q{index}",
+                    "docs": [
+                        {
+                            "title": f"Paper {index}",
+                            "url": f"https://example.com/paper-{index}",
+                        }
+                    ],
+                }
+                for index in range(9)
+            ]
+        }
+    }
+    sub_questions = parse_sub_questions(payload)
+    assert len(sub_questions) == 8
+    assert [question.question for question in sub_questions] == [f"q{i}" for i in range(8)]
+
+
 def test_parse_sub_questions_year_sentinel() -> None:
     payload = {
         "data": {

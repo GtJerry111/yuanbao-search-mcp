@@ -275,7 +275,7 @@ class YuanbaoService:
             raise ValueError("query is required")
 
         limit = max(1, min(limit, self.settings.academic_max_papers))
-        summary_timeout = max(0.1, min(summary_timeout, 120.0))
+        summary_timeout = max(5.0, min(summary_timeout, 120.0))
         cache_key = repr(
             (
                 "academic",
@@ -345,6 +345,9 @@ class YuanbaoService:
                 ) = pending_results[index]
                 if figures_omitted:
                     warnings.append("Summary figure placeholders were omitted.")
+
+        if summary_truncated:
+            warnings.append("AI summary timed out; partial summary returned.")
 
         if not core_papers and not sub_questions:
             raise UpstreamError("Academic search failed for both papers and sub-questions")

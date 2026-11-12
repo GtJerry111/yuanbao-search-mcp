@@ -120,5 +120,6 @@ async def test_search_academic_summary_timeout(settings, academic_search_html) -
         )
         assert result.summary
         assert result.summary_truncated is True
+        assert any("summary" in warning.lower() for warning in result.warnings)
     finally:
         await service.aclose()
