@@ -1283,7 +1283,19 @@ def html_to_markdown(node: Tag) -> str:
         quote.insert(0, "> ")
         quote.append("\n\n")
     for block in node.find_all(
-        ["p", "section", "div", "figure", "figcaption", "pre", "table", "tr"]
+        [
+            "p",
+            "section",
+            "div",
+            "figure",
+            "figcaption",
+            "pre",
+            "table",
+            "tr",
+            "ul",
+            "ol",
+            "dl",
+        ]
     ):
         block.append("\n\n")
     text = node.get_text("")
