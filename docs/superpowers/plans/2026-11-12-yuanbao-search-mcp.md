@@ -932,7 +932,7 @@ def test_extract_weixin_cards() -> None:
     assert len(cards) >= 20
 
     articles = parse_weixin_cards(cards)
-    assert len(articles) == 28
+    assert len(articles) == 26
     assert articles[0].account == "词元潮汐"
     assert "自进化" in articles[0].title
     assert articles[0].url.startswith("https://mp.weixin.qq.com/")
@@ -944,7 +944,7 @@ def test_weixin_cards_deduplicate() -> None:
     html = (FIXTURES / "weixin_search.html").read_text(encoding="utf-8")
     cards = extract_initial_cards(html)
     articles = parse_weixin_cards(cards + cards)
-    assert len(articles) == 28
+    assert len(articles) == 26
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -1856,7 +1856,7 @@ async def test_search_weixin_defaults(settings, weixin_search_html) -> None:
     try:
         result = await service.search_weixin("自进化")
         assert result.count == 20
-        assert result.total_available == 28
+        assert result.total_available == 26
         assert result.results[0].account == "词元潮汐"
         assert result.results[0].publish_time
         assert result.warnings == []
