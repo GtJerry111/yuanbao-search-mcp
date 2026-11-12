@@ -19,6 +19,90 @@
 
 四个工具均为只读、返回结构化结果，并同时支持 stdio 和 Streamable HTTP。
 
+## 如何调用工具
+
+大多数 MCP 客户端会把这些工具暴露成函数调用，你直接用自然语言提问即可，不需要手写 JSON。
+
+### 自然语言示例
+
+- 「搜一下公众号里关于「大模型」的文章，只看量子位，最近 30 天，按时间倒序。」
+- 「把第一篇的正文读出来，最多 5,000 字。」
+- 「查一下检索增强生成（RAG）的学术文献，5 篇核心论文，带 AI 总结，总结最多等 60 秒，同时返回子问题。」
+- 「搜一下政府网站里最近 90 天关于「人工智能 监管」的内容，按时间倒序。」
+
+### 直接 `tools/call` 示例
+
+调试或非 LLM 客户端可以直接发 MCP 请求：
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_weixin_articles",
+    "arguments": {
+      "query": "大模型",
+      "account": "量子位",
+      "limit": 10,
+      "sort": "date",
+      "days": 30
+    }
+  }
+}
+```
+
+读取文章正文（把搜索结果里的 `results[0].url` 传进去）：
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_read_weixin_article",
+    "arguments": {
+      "url": "https://mp.weixin.qq.com/s?...",
+      "max_chars": 5000
+    }
+  }
+}
+```
+
+带 AI 总结的学术搜索：
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_academic",
+    "arguments": {
+      "query": "retrieval augmented generation",
+      "limit": 5,
+      "include_summary": true,
+      "summary_timeout": 60,
+      "include_subquestions": true
+    }
+  }
+}
+```
+
+政府网页搜索：
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_web",
+    "arguments": {
+      "query": "人工智能 监管",
+      "limit": 10,
+      "scope": "gov",
+      "sort": "date",
+      "days": 90
+    }
+  }
+}
+```
+
+上面的 `arguments` 就是 MCP 客户端实际发送的参数对象；省略的字段使用下方工具参考里的默认值。完整的「先搜索、再读正文」流程：从 `yuanbao_search_weixin_articles` 的结果里取 `results[0].url`，传给 `yuanbao_read_weixin_article`。
+
 ## 安装
 
 需要 Python 3.11+ 和 [uv](https://docs.astral.sh/uv/)。请将 `<your-repo-url>` 替换为本仓库的克隆地址。

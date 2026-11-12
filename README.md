@@ -24,6 +24,95 @@ Tencent, and the upstream surface may change without notice.
 All four tools are read-only, return structured output, and work over both
 stdio and Streamable HTTP.
 
+## How to call the tools
+
+Most MCP clients expose these tools as function calls, so you can ask in
+natural language and let the model fill in the arguments. You do not need to
+write JSON by hand.
+
+### Natural-language examples
+
+- "Search WeChat official accounts for `大模型`, only from 量子位, last 30 days, newest first."
+- "Read the first article's full text, up to 5,000 characters."
+- "Find 5 core papers on retrieval-augmented generation, with the AI summary (wait up to 60s) and sub-questions."
+- "Search government sites for `人工智能 监管`, last 90 days, newest first."
+
+### Direct `tools/call` examples
+
+For debugging or non-LLM clients, the MCP request shape is:
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_weixin_articles",
+    "arguments": {
+      "query": "大模型",
+      "account": "量子位",
+      "limit": 10,
+      "sort": "date",
+      "days": 30
+    }
+  }
+}
+```
+
+Read an article (use `results[0].url` from the search response):
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_read_weixin_article",
+    "arguments": {
+      "url": "https://mp.weixin.qq.com/s?...",
+      "max_chars": 5000
+    }
+  }
+}
+```
+
+Academic search with summary:
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_academic",
+    "arguments": {
+      "query": "retrieval augmented generation",
+      "limit": 5,
+      "include_summary": true,
+      "summary_timeout": 60,
+      "include_subquestions": true
+    }
+  }
+}
+```
+
+Government web search:
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "yuanbao_search_web",
+    "arguments": {
+      "query": "人工智能 监管",
+      "limit": 10,
+      "scope": "gov",
+      "sort": "date",
+      "days": 90
+    }
+  }
+}
+```
+
+The `arguments` objects are exactly what an MCP client sends. Omitted fields use
+the defaults in the tool reference below. For a complete search → read workflow,
+take `results[0].url` from `yuanbao_search_weixin_articles` and pass it to
+`yuanbao_read_weixin_article`.
+
 ## Install
 
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/). Replace
