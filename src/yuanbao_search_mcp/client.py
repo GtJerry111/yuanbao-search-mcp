@@ -73,7 +73,7 @@ class TTLCache(Generic[T]):
         return value
 
     def set(self, key: str, value: T) -> None:
-        if self._ttl <= 0:
+        if self._ttl <= 0 or self._maxsize <= 0:
             return
         if len(self._data) >= self._maxsize:
             now = time.monotonic()
@@ -90,7 +90,7 @@ class HttpClient:
         self._client = httpx.AsyncClient(
             timeout=httpx.Timeout(settings.request_timeout, connect=settings.connect_timeout),
             follow_redirects=True,
-            proxy=settings.proxy,
+            proxy=settings.proxy or None,
             headers={
                 "user-agent": settings.user_agent,
                 "accept-language": "zh-CN,zh;q=0.9",
@@ -171,7 +171,7 @@ class HttpClient:
         delay = 0.0
         if retry_after:
             try:
-                delay = max(0.0, float(retry_after))
+                delay = min(max(0.0, float(retry_after)), 60.0)
             except ValueError:
                 delay = 0.0
         if delay <= 0:
