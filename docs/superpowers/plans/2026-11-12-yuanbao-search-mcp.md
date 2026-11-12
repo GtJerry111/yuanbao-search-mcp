@@ -1284,8 +1284,8 @@ def html_to_markdown(node: Tag) -> str:
         quote.append("\n")
     for block in node.find_all(["p", "section", "div"]):
         block.append("\n")
-    text = node.get_text("\n")
-    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = node.get_text("")
+    text = "\n".join(line.strip() for line in text.splitlines())
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
