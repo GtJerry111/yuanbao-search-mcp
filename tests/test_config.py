@@ -37,3 +37,17 @@ def test_invalid_port_is_rejected() -> None:
 
     with pytest.raises(ValueError):
         Settings(_env_file=None, port=70000)
+
+
+def test_cli_invalid_port_is_rejected() -> None:
+    import pytest
+
+    with pytest.raises(ValueError):
+        load_settings(["--port", "70000"])
+
+
+def test_cli_invalid_log_level_is_rejected() -> None:
+    import pytest
+
+    with pytest.raises(ValueError):
+        load_settings(["--log-level", "bogus"])
