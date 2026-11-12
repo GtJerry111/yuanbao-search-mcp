@@ -10,7 +10,9 @@ from datetime import date
 from typing import Any
 from urllib.parse import urlparse
 
-from .client import UpstreamParseError
+from bs4 import BeautifulSoup, Tag
+
+from .client import ArticleUnavailableError, UpstreamParseError
 from .models import WeixinArticle
 
 _HIGHLIGHT_RE = re.compile(r"[\ue40a\ue40b]")
@@ -191,3 +193,80 @@ def is_blocked_page(html: str) -> bool:
 
 def is_article_error_page(html: str) -> bool:
     return any(marker in html for marker in _ARTICLE_ERROR_MARKERS)
+
+
+def _select_text(soup: BeautifulSoup, selector: str) -> str | None:
+    node = soup.select_one(selector)
+    if node is None:
+        return None
+    text = node.get_text(" ", strip=True)
+    return text or None
+
+
+def _meta_content(soup: BeautifulSoup, key: str) -> str | None:
+    for attr in ("property", "name"):
+        node = soup.select_one(f'meta[{attr}="{key}"]')
+        if node and node.get("content"):
+            return str(node["content"]).strip() or None
+    return None
+
+
+def extract_images(node: Tag) -> list[str]:
+    images: list[str] = []
+    for img in node.select("img"):
+        src = img.get("data-src") or img.get("src") or ""
+        if not isinstance(src, str) or not src.startswith("http"):
+            continue
+        if "mmbiz.qpic.cn" not in src:
+            continue
+        src = html_lib.unescape(src)
+        if src not in images:
+            images.append(src)
+    return images
+
+
+def html_to_markdown(node: Tag) -> str:
+    for tag in node.select("script, style, noscript, svg, iframe"):
+        tag.decompose()
+    for br in node.find_all("br"):
+        br.replace_with("\n")
+    for level in range(1, 7):
+        for heading in node.find_all(f"h{level}"):
+            heading.insert(0, f"{'#' * level} ")
+            heading.append("\n")
+    for item in node.find_all("li"):
+        item.insert(0, "- ")
+        item.append("\n")
+    for quote in node.find_all("blockquote"):
+        quote.insert(0, "> ")
+        quote.append("\n")
+    for block in node.find_all(["p", "section", "div"]):
+        block.append("\n")
+    text = node.get_text("")
+    text = "\n".join(line.strip() for line in text.splitlines())
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def parse_weixin_article(html: str) -> ParsedArticle:
+    soup = BeautifulSoup(html, "lxml")
+    content_node = soup.select_one("#js_content")
+    if content_node is None:
+        if is_article_error_page(html) or is_blocked_page(html):
+            raise ArticleUnavailableError(
+                "Article is deleted, restricted, or requires the WeChat client."
+            )
+        raise UpstreamParseError("Article content node #js_content was not found")
+
+    title = _select_text(soup, "#activity-name") or _meta_content(soup, "og:title")
+    if not title:
+        raise UpstreamParseError("Article title was not found")
+
+    return ParsedArticle(
+        title=title,
+        account=_select_text(soup, "#js_name") or _meta_content(soup, "author"),
+        publish_time=_select_text(soup, "#publish_time")
+        or _meta_content(soup, "article:published_time"),
+        content=html_to_markdown(content_node),
+        images=extract_images(content_node),
+    )
