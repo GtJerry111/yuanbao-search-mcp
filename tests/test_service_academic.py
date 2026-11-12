@@ -1,9 +1,13 @@
+import asyncio
 import json
 from pathlib import Path
 
 import httpx
+import pytest
 import respx
 
+from yuanbao_search_mcp.academic import AcademicSession
+from yuanbao_search_mcp.client import UpstreamError
 from yuanbao_search_mcp.service import YuanbaoService
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -78,6 +82,79 @@ async def test_search_academic_partial_when_sup_fails(settings, academic_search_
         assert result.core_papers == []
         assert len(result.sub_questions) == 8
         assert result.warnings
+    finally:
+        await service.aclose()
+
+
+@respx.mock
+async def test_search_academic_empty_results_are_not_an_error(
+    settings, academic_search_html
+) -> None:
+    respx.get(url__regex=r"https://so\.qq\.com/isearch\?.*tab=xueshu").mock(
+        return_value=httpx.Response(200, text=academic_search_html)
+    )
+    respx.post("https://lizhiassistant.search.qq.com/vertical_hub/academic/search_for_subq").mock(
+        return_value=httpx.Response(200, json={"data": {"sub_queries": []}})
+    )
+    respx.post("https://lizhiassistant.search.qq.com/academic_agent/frame_get").mock(
+        return_value=httpx.Response(200, json={"data": {"sup_list": []}})
+    )
+
+    service = YuanbaoService(settings)
+    try:
+        result = await service.search_academic("大模型推理", limit=5)
+        assert result.core_papers == []
+        assert result.sub_questions == []
+        assert any("returned no results" in warning for warning in result.warnings)
+    finally:
+        await service.aclose()
+
+
+@respx.mock
+async def test_search_academic_raises_when_both_calls_fail(
+    settings, academic_search_html
+) -> None:
+    respx.get(url__regex=r"https://so\.qq\.com/isearch\?.*tab=xueshu").mock(
+        return_value=httpx.Response(200, text=academic_search_html)
+    )
+    respx.post("https://lizhiassistant.search.qq.com/vertical_hub/academic/search_for_subq").mock(
+        return_value=httpx.Response(500)
+    )
+    respx.post("https://lizhiassistant.search.qq.com/academic_agent/frame_get").mock(
+        return_value=httpx.Response(500)
+    )
+
+    service = YuanbaoService(settings)
+    try:
+        with pytest.raises(UpstreamError):
+            await service.search_academic("大模型推理", limit=5)
+    finally:
+        await service.aclose()
+
+
+async def test_search_academic_cancellation_cleans_up(settings, monkeypatch) -> None:
+    started = asyncio.Event()
+
+    async def fake_create(self: AcademicSession) -> str:
+        return "00000000-0000-0000-0000-000000000000"
+
+    async def fake_sup(self: AcademicSession) -> list:
+        started.set()
+        await asyncio.sleep(10)
+        return []
+
+    monkeypatch.setattr(AcademicSession, "create", fake_create)
+    monkeypatch.setattr(AcademicSession, "fetch_sup", fake_sup)
+
+    service = YuanbaoService(settings)
+    try:
+        task = asyncio.create_task(
+            service.search_academic("大模型推理", include_subquestions=False)
+        )
+        await asyncio.wait_for(started.wait(), timeout=1)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
     finally:
         await service.aclose()
 

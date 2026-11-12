@@ -235,7 +235,7 @@ class AcademicSession:
             ACADEMIC_PAGE,
             params={"query": self.query, "tab": "xueshu"},
         )
-        if is_blocked_page(html):
+        if is_blocked_page(html, require_missing="sessionId"):
             raise UpstreamBlockedError("Yuanbao returned an anti-crawl page")
         self.session_id = extract_session_id(html)
         return self.session_id

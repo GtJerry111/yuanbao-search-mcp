@@ -120,7 +120,7 @@ class YuanbaoService:
             "https://so.qq.com/isearch",
             params={"query": upstream_query, "tab": "weixin_article"},
         )
-        if is_blocked_page(html):
+        if is_blocked_page(html, require_missing="initialCards"):
             raise UpstreamBlockedError("Yuanbao returned an anti-crawl page")
 
         articles = parse_weixin_cards(extract_initial_cards(html))
@@ -176,8 +176,9 @@ class YuanbaoService:
             url,
             headers={"user-agent": WECHAT_USER_AGENT, "referer": "https://so.qq.com/"},
             max_bytes=15_000_000,
+            expected_host="mp.weixin.qq.com",
         )
-        if is_blocked_page(html):
+        if is_blocked_page(html, require_missing="#js_content"):
             raise ArticleUnavailableError("WeChat returned a verification page")
         if is_article_error_page(html) and "#js_content" not in html:
             raise ArticleUnavailableError("Article is deleted, restricted, or requires WeChat")
@@ -187,7 +188,9 @@ class YuanbaoService:
         content = parsed.content
         truncated = False
         if len(content) > max_chars:
-            content = content[:max_chars].rsplit("\n\n", 1)[0] or content[:max_chars]
+            cut = content[:max_chars]
+            boundary = cut.rfind("\n\n")
+            content = cut[:boundary] if boundary >= int(max_chars * 0.8) else cut
             truncated = True
 
         result = ArticleResult(
@@ -233,7 +236,7 @@ class YuanbaoService:
             "https://so.qq.com/isearch",
             params={"query": query, "tab": scope},
         )
-        if is_blocked_page(html):
+        if is_blocked_page(html, require_missing="initialCards"):
             raise UpstreamBlockedError("Yuanbao returned an anti-crawl page")
 
         results, related = parse_web_cards(extract_initial_cards(html))
@@ -299,67 +302,81 @@ class YuanbaoService:
             if include_subquestions
             else None
         )
+        summary_task: asyncio.Task[tuple[str, bool, int, bool]] | None = None
+        try:
+            # Wait for get_sup to start the academic generation before polling summary frames.
+            sup_result = (await asyncio.gather(sup_task, return_exceptions=True))[0]
 
-        # Wait for get_sup to start the academic generation before polling summary frames.
-        sup_result = (await asyncio.gather(sup_task, return_exceptions=True))[0]
+            summary_task = (
+                asyncio.create_task(session.fetch_summary(summary_timeout))
+                if include_summary
+                else None
+            )
 
-        summary_task = (
-            asyncio.create_task(session.fetch_summary(summary_timeout))
-            if include_summary
-            else None
-        )
+            pending = [task for task in (subq_task, summary_task) if task is not None]
+            pending_results = await asyncio.gather(*pending, return_exceptions=True)
 
-        pending = [task for task in (subq_task, summary_task) if task is not None]
-        pending_results = await asyncio.gather(*pending, return_exceptions=True)
+            core_papers: list[AcademicPaper] = []
+            sub_questions = []
+            summary = None
+            summary_truncated = False
+            summary_chars = 0
+            warnings: list[str] = []
 
-        core_papers: list[AcademicPaper] = []
-        sub_questions = []
-        summary = None
-        summary_truncated = False
-        summary_chars = 0
-        warnings: list[str] = []
+            sup_failed = isinstance(sup_result, Exception)
+            subq_failed = subq_task is not None and isinstance(pending_results[0], Exception)
 
-        if isinstance(sup_result, Exception):
-            warnings.append(f"Core papers could not be loaded: {sup_result}")
-        else:
-            core_papers = sup_result[:limit]
-
-        index = 0
-        if subq_task is not None:
-            if isinstance(pending_results[index], Exception):
-                warnings.append(f"Sub-questions could not be loaded: {pending_results[index]}")
+            if sup_failed:
+                warnings.append(f"Core papers could not be loaded: {sup_result}")
             else:
-                sub_questions = pending_results[index]
-            index += 1
+                core_papers = sup_result[:limit]
 
-        figures_omitted = False
-        if summary_task is not None:
-            if isinstance(pending_results[index], Exception):
-                warnings.append(f"AI summary failed: {pending_results[index]}")
-            else:
-                (
-                    summary,
-                    summary_truncated,
-                    summary_chars,
-                    figures_omitted,
-                ) = pending_results[index]
-                if figures_omitted:
-                    warnings.append("Summary figure placeholders were omitted.")
+            index = 0
+            if subq_task is not None:
+                if subq_failed:
+                    warnings.append(f"Sub-questions could not be loaded: {pending_results[index]}")
+                else:
+                    sub_questions = pending_results[index]
+                index += 1
 
-        if summary_truncated:
-            warnings.append("AI summary was truncated; partial summary returned.")
+            figures_omitted = False
+            if summary_task is not None:
+                if isinstance(pending_results[index], Exception):
+                    warnings.append(f"AI summary failed: {pending_results[index]}")
+                else:
+                    (
+                        summary,
+                        summary_truncated,
+                        summary_chars,
+                        figures_omitted,
+                    ) = pending_results[index]
+                    if figures_omitted:
+                        warnings.append("Summary figure placeholders were omitted.")
 
-        if not core_papers and not sub_questions:
-            raise UpstreamError("Academic search failed for both papers and sub-questions")
+            if summary_truncated:
+                warnings.append("AI summary was truncated; partial summary returned.")
 
-        result = AcademicSearchResult(
-            query=query,
-            core_papers=core_papers,
-            sub_questions=sub_questions,
-            summary=summary,
-            summary_truncated=summary_truncated,
-            summary_char_count=summary_chars,
-            warnings=warnings,
-        )
-        self._academic_cache.set(cache_key, result)
-        return result
+            if sup_failed and (subq_task is None or subq_failed):
+                raise UpstreamError("Academic search failed for both papers and sub-questions")
+            if not core_papers and not sub_questions:
+                warnings.append("Academic search returned no results.")
+
+            result = AcademicSearchResult(
+                query=query,
+                core_papers=core_papers,
+                sub_questions=sub_questions,
+                summary=summary,
+                summary_truncated=summary_truncated,
+                summary_char_count=summary_chars,
+                warnings=warnings,
+            )
+            self._academic_cache.set(cache_key, result)
+            return result
+        finally:
+            for task in (sup_task, subq_task, summary_task):
+                if task is not None and not task.done():
+                    task.cancel()
+            await asyncio.gather(
+                *(task for task in (sup_task, subq_task, summary_task) if task is not None),
+                return_exceptions=True,
+            )

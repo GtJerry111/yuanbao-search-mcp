@@ -372,7 +372,7 @@ English, actionable messages (`isError=true`). No stack traces to clients.
 ### Unit tests (fixtures)
 
 - RSC payload extraction from `tests/fixtures/weixin_search.html`.
-- WeChat card parsing: 28 results, fields, highlight stripping.
+- WeChat card parsing: 26 results, fields, highlight stripping.
 - Article parsing: title/account/time/content/images, truncation, error page.
 - Academic normalization: `sup_list`, `sub_queries`, summary frames,
   dedupe, abstract truncation.

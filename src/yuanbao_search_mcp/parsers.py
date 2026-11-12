@@ -69,6 +69,7 @@ def truncate(text: str | None, limit: int) -> tuple[str | None, bool]:
 
 
 def normalize_url(url: str) -> str:
+    url = url.strip()
     parsed = urlparse(url)
     if parsed.hostname == "mp.weixin.qq.com" and parsed.scheme == "http":
         return "https://" + url[len("http://") :]
@@ -145,13 +146,15 @@ def extract_initial_cards(html: str) -> list[dict[str, Any]]:
         payload = payload.replace('\\"', '"').replace("\\\\", "\\")
         start = payload.find('{"initialCards":')
         if start < 0:
-            return []
+            raise UpstreamParseError("initialCards marker could not be decoded")
     try:
         data = _extract_json_object(payload, start)
-    except (json.JSONDecodeError, UpstreamParseError):
-        return []
+    except (json.JSONDecodeError, UpstreamParseError) as exc:
+        raise UpstreamParseError("Could not parse initialCards payload") from exc
     cards = data.get("initialCards")
-    return cards if isinstance(cards, list) else []
+    if not isinstance(cards, list):
+        raise UpstreamParseError("initialCards is not a list")
+    return [card for card in cards if isinstance(card, dict)]
 
 
 def parse_weixin_cards(cards: list[dict[str, Any]]) -> list[WeixinArticle]:
@@ -187,7 +190,9 @@ def parse_weixin_cards(cards: list[dict[str, Any]]) -> list[WeixinArticle]:
     return results
 
 
-def is_blocked_page(html: str) -> bool:
+def is_blocked_page(html: str, *, require_missing: str | None = None) -> bool:
+    if require_missing is not None and require_missing in html:
+        return False
     return any(marker in html for marker in _BLOCK_MARKERS)
 
 
@@ -217,9 +222,9 @@ def extract_images(node: Tag) -> list[str]:
         src = img.get("data-src") or img.get("src") or ""
         if not isinstance(src, str) or not src.startswith("http"):
             continue
-        if "mmbiz.qpic.cn" not in src:
-            continue
         src = html_lib.unescape(src)
+        if urlparse(src).hostname != "mmbiz.qpic.cn":
+            continue
         if src not in images:
             images.append(src)
     return images
@@ -266,7 +271,7 @@ def parse_weixin_article(html: str) -> ParsedArticle:
     soup = BeautifulSoup(html, "lxml")
     content_node = soup.select_one("#js_content")
     if content_node is None:
-        if is_article_error_page(html) or is_blocked_page(html):
+        if is_article_error_page(html) or is_blocked_page(html, require_missing="#js_content"):
             raise ArticleUnavailableError(
                 "Article is deleted, restricted, or requires the WeChat client."
             )

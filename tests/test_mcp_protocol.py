@@ -11,7 +11,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def server_params(**env_overrides: str) -> StdioServerParameters:
-    env = {**os.environ, **env_overrides}
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("YUANBAO_")
+    }
+    env.update(env_overrides)
     return StdioServerParameters(
         command=sys.executable,
         args=["-m", "yuanbao_search_mcp"],

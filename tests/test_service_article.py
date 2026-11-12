@@ -46,10 +46,27 @@ async def test_read_article_truncates(settings) -> None:
         result = await service.read_article(ARTICLE_URL, max_chars=1000)
         assert result.original_chars > result.char_count
         assert result.truncated is True
+        assert 800 <= result.char_count <= 1000
     finally:
         await service.aclose()
 
 
+@respx.mock
+async def test_read_article_allows_block_markers_in_content(settings) -> None:
+    html = ARTICLE_HTML.replace(
+        '<div id="js_content">',
+        '<style>#js_content { margin: 0; }</style>\n<div id="js_content">',
+    ).replace("Paragraph one.", "操作频繁不是封禁页面。")
+    respx.get(ARTICLE_URL).mock(return_value=httpx.Response(200, text=html))
+    service = YuanbaoService(settings)
+    try:
+        result = await service.read_article(ARTICLE_URL)
+        assert "操作频繁" in result.content
+    finally:
+        await service.aclose()
+
+
+@respx.mock
 async def test_read_article_rejects_non_weixin(settings) -> None:
     service = YuanbaoService(settings)
     try:

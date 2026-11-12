@@ -1,6 +1,9 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
+
+from yuanbao_search_mcp.client import UpstreamParseError
 from yuanbao_search_mcp.parsers import (
     extract_initial_cards,
     parse_date,
@@ -42,3 +45,17 @@ def test_weixin_cards_deduplicate() -> None:
     cards = extract_initial_cards(html)
     articles = parse_weixin_cards(cards + cards)
     assert len(articles) == 26
+
+
+def test_extract_initial_cards_without_marker_returns_empty() -> None:
+    assert extract_initial_cards("<html><body>no cards here</body></html>") == []
+
+
+def test_extract_initial_cards_malformed_payload_raises() -> None:
+    with pytest.raises(UpstreamParseError):
+        extract_initial_cards('{"initialCards": [}')
+
+
+def test_extract_initial_cards_skips_non_dict_cards() -> None:
+    cards = extract_initial_cards('{"initialCards": [{"data": {}}, "junk", 42]}')
+    assert cards == [{"data": {}}]

@@ -108,10 +108,18 @@ class HttpClient:
         headers: dict[str, str] | None = None,
         rate_limit: bool = True,
         max_bytes: int = 15_000_000,
+        expected_host: str | None = None,
     ) -> str:
         if rate_limit:
             await self._limiter.wait()
         response = await self._request("GET", url, params=params, headers=headers)
+        if expected_host is not None:
+            actual_host = (response.url.host or "").casefold()
+            if actual_host != expected_host.casefold():
+                raise UpstreamError(
+                    f"Redirected to unexpected host {actual_host or '<unknown>'}; "
+                    f"expected {expected_host}"
+                )
         if len(response.content) > max_bytes:
             raise UpstreamError(f"Response from {url} is larger than {max_bytes} bytes")
         return response.text

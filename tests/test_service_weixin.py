@@ -155,6 +155,21 @@ async def test_search_weixin_days_filter_and_warning(settings) -> None:
 
 
 @respx.mock
+async def test_search_weixin_block_marker_in_results(settings) -> None:
+    html = _rsc_html([_weixin_card("环境异常与操作频繁测试", "2026-11-12")])
+    respx.get("https://so.qq.com/isearch").mock(
+        return_value=httpx.Response(200, text=html)
+    )
+    service = YuanbaoService(settings)
+    try:
+        result = await service.search_weixin("环境异常")
+        assert result.count == 1
+        assert result.results[0].title == "环境异常与操作频繁测试"
+    finally:
+        await service.aclose()
+
+
+@respx.mock
 async def test_search_weixin_cache_hits(settings, weixin_search_html) -> None:
     route = respx.get("https://so.qq.com/isearch").mock(
         return_value=httpx.Response(200, text=weixin_search_html)

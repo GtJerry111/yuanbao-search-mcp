@@ -133,6 +133,22 @@ async def test_retry_exhaustion(settings) -> None:
 
 
 @respx.mock
+async def test_redirect_to_unexpected_host_rejected(settings) -> None:
+    respx.get("https://mp.weixin.qq.com/s?x=1").mock(
+        return_value=httpx.Response(302, headers={"location": "http://127.0.0.1/secret"})
+    )
+    respx.get("http://127.0.0.1/secret").mock(
+        return_value=httpx.Response(200, text="secret")
+    )
+    client = HttpClient(settings)
+    try:
+        with pytest.raises(UpstreamError):
+            await client.get("https://mp.weixin.qq.com/s?x=1", expected_host="mp.weixin.qq.com")
+    finally:
+        await client.aclose()
+
+
+@respx.mock
 async def test_max_bytes_rejects(settings) -> None:
     respx.get("https://example.com/big").mock(return_value=httpx.Response(200, text="x" * 100))
     client = HttpClient(settings)
