@@ -41,6 +41,21 @@ def test_article_error_page() -> None:
         parse_weixin_article("<html><body>参数错误</body></html>")
 
 
+def test_extract_images_rejects_lookalike_hosts() -> None:
+    html = """
+    <html><body>
+    <h1 id="activity-name">Images</h1>
+    <div id="js_content">
+      <img data-src="https://mmbiz.qpic.cn/ok.jpg" />
+      <img data-src="https://mmbiz.qpic.cn.evil.com/bad.jpg" />
+      <img data-src="https://evil.com/mmbiz.qpic.cn/x.jpg" />
+    </div>
+    </body></html>
+    """
+    article = parse_weixin_article(html)
+    assert article.images == ["https://mmbiz.qpic.cn/ok.jpg"]
+
+
 MINIFIED_HTML = """
 <html><body>
 <h1 id="activity-name">Minified</h1>

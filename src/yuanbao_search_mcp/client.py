@@ -7,6 +7,7 @@ import logging
 import random
 import time
 from typing import Any, Generic, TypeVar
+from urllib.parse import urljoin, urlparse
 
 import httpx
 
@@ -15,6 +16,9 @@ from .config import Settings
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+
+_REDIRECT_STATUS_CODES = frozenset({301, 302, 303, 307, 308})
+_MAX_REDIRECTS = 5
 
 
 class UpstreamError(RuntimeError):
@@ -112,17 +116,51 @@ class HttpClient:
     ) -> str:
         if rate_limit:
             await self._limiter.wait()
-        response = await self._request("GET", url, params=params, headers=headers)
         if expected_host is not None:
-            actual_host = (response.url.host or "").casefold()
-            if actual_host != expected_host.casefold():
-                raise UpstreamError(
-                    f"Redirected to unexpected host {actual_host or '<unknown>'}; "
-                    f"expected {expected_host}"
-                )
+            response = await self._get_with_validated_redirects(
+                url, expected_host, params, headers
+            )
+        else:
+            response = await self._request("GET", url, params=params, headers=headers)
         if len(response.content) > max_bytes:
             raise UpstreamError(f"Response from {url} is larger than {max_bytes} bytes")
         return response.text
+
+    async def _get_with_validated_redirects(
+        self,
+        url: str,
+        expected_host: str,
+        params: dict[str, Any] | None,
+        headers: dict[str, str] | None,
+    ) -> httpx.Response:
+        expected = expected_host.casefold()
+        current_url = url
+        current_params = params
+        for redirects in range(_MAX_REDIRECTS + 1):
+            response = await self._request(
+                "GET",
+                current_url,
+                params=current_params,
+                headers=headers,
+                follow_redirects=False,
+            )
+            if response.status_code not in _REDIRECT_STATUS_CODES:
+                return response
+            location = response.headers.get("location")
+            if not location:
+                return response
+            target = urljoin(str(response.url), location)
+            target_host = (urlparse(target).hostname or "").casefold()
+            if target_host != expected:
+                raise UpstreamError(
+                    f"Redirected to unexpected host {target_host or '<unknown>'}; "
+                    f"expected {expected_host}"
+                )
+            if redirects >= _MAX_REDIRECTS:
+                break
+            current_url = target
+            current_params = None
+        raise UpstreamError(f"Too many redirects while fetching {url}")
 
     async def post_json(
         self,

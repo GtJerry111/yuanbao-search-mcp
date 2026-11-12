@@ -21,6 +21,7 @@ _CHUNK_RE = re.compile(r'self\.__next_f\.push\(\[1,(".*?")\]\)</script>', re.S)
 _DATE_RE = re.compile(r"^(\d{4})[-/](\d{1,2})[-/](\d{1,2})")
 _DATE_CN_RE = re.compile(r"^(\d{4})年(\d{1,2})月(\d{1,2})日")
 _FIGURE_RE = re.compile(r"<figure\b[^>]*>.*?</figure>", re.S | re.I)
+_JS_CONTENT_ATTR_RE = re.compile(r'id=["\']js_content["\']', re.I)
 
 _BLOCK_MARKERS = (
     "环境异常",
@@ -200,6 +201,10 @@ def is_article_error_page(html: str) -> bool:
     return any(marker in html for marker in _ARTICLE_ERROR_MARKERS)
 
 
+def has_article_content(html: str) -> bool:
+    return bool(_JS_CONTENT_ATTR_RE.search(html))
+
+
 def _select_text(soup: BeautifulSoup, selector: str) -> str | None:
     node = soup.select_one(selector)
     if node is None:
@@ -271,7 +276,7 @@ def parse_weixin_article(html: str) -> ParsedArticle:
     soup = BeautifulSoup(html, "lxml")
     content_node = soup.select_one("#js_content")
     if content_node is None:
-        if is_article_error_page(html) or is_blocked_page(html, require_missing="#js_content"):
+        if is_article_error_page(html) or is_blocked_page(html):
             raise ArticleUnavailableError(
                 "Article is deleted, restricted, or requires the WeChat client."
             )

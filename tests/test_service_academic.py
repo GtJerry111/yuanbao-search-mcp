@@ -6,7 +6,6 @@ import httpx
 import pytest
 import respx
 
-from yuanbao_search_mcp.academic import AcademicSession
 from yuanbao_search_mcp.client import UpstreamError
 from yuanbao_search_mcp.service import YuanbaoService
 
@@ -133,28 +132,41 @@ async def test_search_academic_raises_when_both_calls_fail(
 
 
 async def test_search_academic_cancellation_cleans_up(settings, monkeypatch) -> None:
-    started = asyncio.Event()
+    subq_started = asyncio.Event()
+    subq_cancelled = asyncio.Event()
 
-    async def fake_create(self: AcademicSession) -> str:
-        return "00000000-0000-0000-0000-000000000000"
+    class FakeSession:
+        def __init__(self, client, query):
+            pass
 
-    async def fake_sup(self: AcademicSession) -> list:
-        started.set()
-        await asyncio.sleep(10)
-        return []
+        async def create(self):
+            return "sid"
 
-    monkeypatch.setattr(AcademicSession, "create", fake_create)
-    monkeypatch.setattr(AcademicSession, "fetch_sup", fake_sup)
+        async def fetch_sup(self):
+            await asyncio.sleep(10)
+
+        async def fetch_sub_questions(self):
+            subq_started.set()
+            try:
+                await asyncio.sleep(10)
+            finally:
+                subq_cancelled.set()
+
+        async def fetch_summary(self, timeout):
+            return ("", False, 0, False)
+
+    monkeypatch.setattr("yuanbao_search_mcp.service.AcademicSession", FakeSession)
 
     service = YuanbaoService(settings)
     try:
         task = asyncio.create_task(
-            service.search_academic("大模型推理", include_subquestions=False)
+            service.search_academic("x", include_subquestions=True)
         )
-        await asyncio.wait_for(started.wait(), timeout=1)
+        await asyncio.wait_for(subq_started.wait(), timeout=1)
         task.cancel()
         with pytest.raises(asyncio.CancelledError):
             await task
+        assert subq_cancelled.is_set()
     finally:
         await service.aclose()
 

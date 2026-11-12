@@ -26,6 +26,7 @@ from .models import (
 )
 from .parsers import (
     extract_initial_cards,
+    has_article_content,
     is_article_error_page,
     is_blocked_page,
     normalize_url,
@@ -178,10 +179,13 @@ class YuanbaoService:
             max_bytes=15_000_000,
             expected_host="mp.weixin.qq.com",
         )
-        if is_blocked_page(html, require_missing="#js_content"):
-            raise ArticleUnavailableError("WeChat returned a verification page")
-        if is_article_error_page(html) and "#js_content" not in html:
-            raise ArticleUnavailableError("Article is deleted, restricted, or requires WeChat")
+        if not has_article_content(html):
+            if is_blocked_page(html):
+                raise ArticleUnavailableError("WeChat returned a verification page")
+            if is_article_error_page(html):
+                raise ArticleUnavailableError(
+                    "Article is deleted, restricted, or requires WeChat"
+                )
 
         parsed = parse_weixin_article(html)
         original_chars = len(parsed.content)
@@ -357,7 +361,12 @@ class YuanbaoService:
                 warnings.append("AI summary was truncated; partial summary returned.")
 
             if sup_failed and (subq_task is None or subq_failed):
-                raise UpstreamError("Academic search failed for both papers and sub-questions")
+                message = (
+                    "Academic search failed for both papers and sub-questions"
+                    if subq_task is not None
+                    else "Academic search failed"
+                )
+                raise UpstreamError(message)
             if not core_papers and not sub_questions:
                 warnings.append("Academic search returned no results.")
 

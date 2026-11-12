@@ -14,6 +14,14 @@ def server_params(**env_overrides: str) -> StdioServerParameters:
     env = {
         key: value for key, value in os.environ.items() if not key.startswith("YUANBAO_")
     }
+    env.update(
+        {
+            "YUANBAO_ENABLE_WEIXIN_SEARCH": "true",
+            "YUANBAO_ENABLE_ARTICLE_READER": "true",
+            "YUANBAO_ENABLE_ACADEMIC_SEARCH": "true",
+            "YUANBAO_ENABLE_WEB_SEARCH": "true",
+        }
+    )
     env.update(env_overrides)
     return StdioServerParameters(
         command=sys.executable,

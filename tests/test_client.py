@@ -137,13 +137,33 @@ async def test_redirect_to_unexpected_host_rejected(settings) -> None:
     respx.get("https://mp.weixin.qq.com/s?x=1").mock(
         return_value=httpx.Response(302, headers={"location": "http://127.0.0.1/secret"})
     )
-    respx.get("http://127.0.0.1/secret").mock(
+    secret_route = respx.get("http://127.0.0.1/secret").mock(
         return_value=httpx.Response(200, text="secret")
     )
     client = HttpClient(settings)
     try:
         with pytest.raises(UpstreamError):
             await client.get("https://mp.weixin.qq.com/s?x=1", expected_host="mp.weixin.qq.com")
+        assert secret_route.call_count == 0
+    finally:
+        await client.aclose()
+
+
+@respx.mock
+async def test_same_host_redirect_is_followed(settings) -> None:
+    respx.get("https://mp.weixin.qq.com/s?x=1").mock(
+        return_value=httpx.Response(302, headers={"location": "/s?x=2"})
+    )
+    target = respx.get("https://mp.weixin.qq.com/s?x=2").mock(
+        return_value=httpx.Response(200, text="article")
+    )
+    client = HttpClient(settings)
+    try:
+        text = await client.get(
+            "https://mp.weixin.qq.com/s?x=1", expected_host="mp.weixin.qq.com"
+        )
+        assert text == "article"
+        assert target.call_count == 1
     finally:
         await client.aclose()
 

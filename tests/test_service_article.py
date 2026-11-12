@@ -53,15 +53,15 @@ async def test_read_article_truncates(settings) -> None:
 
 @respx.mock
 async def test_read_article_allows_block_markers_in_content(settings) -> None:
-    html = ARTICLE_HTML.replace(
-        '<div id="js_content">',
-        '<style>#js_content { margin: 0; }</style>\n<div id="js_content">',
-    ).replace("Paragraph one.", "操作频繁不是封禁页面。")
+    html = ARTICLE_HTML.replace("Paragraph one.", "操作频繁不是封禁页面。").replace(
+        "Paragraph two.", "参数错误不是文章错误页面。"
+    )
     respx.get(ARTICLE_URL).mock(return_value=httpx.Response(200, text=html))
     service = YuanbaoService(settings)
     try:
         result = await service.read_article(ARTICLE_URL)
         assert "操作频繁" in result.content
+        assert "参数错误" in result.content
     finally:
         await service.aclose()
 
@@ -83,7 +83,22 @@ async def test_read_article_blocked(settings) -> None:
     )
     service = YuanbaoService(settings)
     try:
-        with pytest.raises(ArticleUnavailableError):
+        with pytest.raises(ArticleUnavailableError, match="verification"):
+            await service.read_article(ARTICLE_URL)
+    finally:
+        await service.aclose()
+
+
+@respx.mock
+async def test_read_article_deleted(settings) -> None:
+    respx.get(ARTICLE_URL).mock(
+        return_value=httpx.Response(
+            200, text="<html><body>该内容已被发布者删除</body></html>"
+        )
+    )
+    service = YuanbaoService(settings)
+    try:
+        with pytest.raises(ArticleUnavailableError, match="deleted"):
             await service.read_article(ARTICLE_URL)
     finally:
         await service.aclose()
